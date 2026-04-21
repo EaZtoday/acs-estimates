@@ -20,9 +20,8 @@ import {
   EditPageRelationsSection,
 } from "@/components/layouts/pages/edit-page-layout";
 import OrganizationRelationsPanel from "./organization-relations-panel";
-import CustomerRelationsPanel from "./customer-relations-panel";
-import JobRelationsPanel from "./job-relations-panel";
-import ServicesPanel from "./services-panel";
+import ContactRelationsPanel from "./contact-relations-panel";
+import ProjectRelationsPanel from "./project-relations-panel";
 
 interface UnifiedEditPageProps {
   entity:

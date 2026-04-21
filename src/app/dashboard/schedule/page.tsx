@@ -1,7 +1,7 @@
 import { appointmentService } from "@/lib/api/appointments";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Calendar as CalendarIcon, Clock, User, Tool } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/primitives/card";
+import { Badge } from "@/components/ui/primitives/badge";
+import { Calendar as CalendarIcon, Clock, User, Wrench } from "lucide-react";
 import { format, isSameDay, parseISO } from "date-fns";
 
 export default async function SchedulePage() {
@@ -59,7 +59,7 @@ export default async function SchedulePage() {
                         </h3>
                         <div className="flex items-center gap-4 text-sm text-slate-500">
                           <span className="flex items-center gap-1">
-                            <Tool className="h-3 w-3" /> {app.job?.service_type || 'Window Cleaning'}
+                            <Wrench className="h-3 w-3" /> {app.job?.service_type || 'Window Cleaning'}
                           </span>
                           <span className="flex items-center gap-1">
                             <Badge variant={app.type === 'estimate' ? 'outline' : 'default'} className="capitalize">

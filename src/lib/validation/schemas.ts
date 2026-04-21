@@ -286,10 +286,8 @@ export const jobCreateSchema = z.object({
 	frequency: z.string().default("one-time"),
 	status: z.string().default("estimate_requested"),
 	price_estimate: z.coerce.number().min(0).default(0),
-	notes: z.string().optional().nullable(),
+	notes: z.string().optional(),
 });
-
-export const jobUpdateSchema = jobCreateSchema.partial();
 
 // Appointment schemas
 export const appointmentCreateSchema = z.object({

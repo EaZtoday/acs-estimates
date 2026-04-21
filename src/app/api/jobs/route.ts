@@ -61,14 +61,7 @@ export async function POST(request: NextRequest) {
     const validatedData = validationResult.data;
 
     // Create job
-    const job = await jobService.create({
-      ...validatedData,
-      description: validatedData.description || null,
-      url: validatedData.url || null,
-      organization_id: validatedData.organization_id || null,
-      start_date: validatedData.start_date || null,
-      end_date: validatedData.end_date || null,
-    });
+    const job = await jobService.create(validatedData);
 
     console.log('Job created:', job);
     await storeIdempotentResponse(request, "crm:jobs:post", job, 200);

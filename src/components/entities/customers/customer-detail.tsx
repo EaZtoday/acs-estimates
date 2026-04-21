@@ -18,7 +18,7 @@ import {
   Briefcase
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/primitives/badge";
 
 interface CustomerDetailProps {
   customer: Customer;

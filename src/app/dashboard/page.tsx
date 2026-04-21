@@ -117,10 +117,10 @@ function buildOfferHistory(
 export default async function DashboardPage() {
   const supabase = await createServerSupabaseClient();
   let stats: {
-    organizations: number;
     customers: number;
     jobs: number;
-    offers: number;
+    appointments: number;
+    messages: number;
   };
   let activeJobs: any[] = [];
   let offerRows: RawOfferRow[] = [];

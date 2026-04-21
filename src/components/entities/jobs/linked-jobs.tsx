@@ -93,19 +93,16 @@ export default function LinkedJobs({
                   href={`/dashboard/jobs/${job.id}`}
                   className="text-sm font-medium text-neutral-900 hover:text-blue-600"
                 >
-                  {job.title}
+                  {(job as any).service_type || 'Window Cleaning'} - {(job as any).type === 'estimate' ? 'Estimate' : 'Job'}
                 </Link>
-                {job.description && (
+                {(job as any).notes && (
                   <p className="text-sm text-neutral-500 mt-1 line-clamp-2">
-                    {job.description}
+                    {(job as any).notes}
                   </p>
                 )}
                 <div className="flex items-center gap-4 mt-2 text-xs text-neutral-400">
-                  {job.start_date && (
-                    <span>Start: {formatDate(job.start_date)}</span>
-                  )}
-                  {job.end_date && (
-                    <span>End: {formatDate(job.end_date)}</span>
+                  {job.created_at && (
+                    <span>Created: {formatDate(job.created_at)}</span>
                   )}
                 </div>
               </div>
