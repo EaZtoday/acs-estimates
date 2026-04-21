@@ -1,1 +1,2 @@
-export * from "./linked-customers";
+export * from "./linked-contacts";
+export * from "./linked-users";
