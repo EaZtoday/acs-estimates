@@ -34,8 +34,8 @@ export const suspenseConfig: SWRConfiguration = {
 
 export const cacheKeys = {
   organizations: "/api/organizations",
-  contacts: "/api/contacts",
-  projects: "/api/projects",
+  customers: "/api/customers",
+  jobs: "/api/jobs",
   offers: "/api/offers",
   services: "/api/services",
   corporateEntities: "/api/corporate-entities",

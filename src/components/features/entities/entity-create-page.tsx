@@ -11,8 +11,8 @@ import ServicesPanel from "@/components/forms/unified/services-panel";
 
 type EntityType =
   | "organizations"
-  | "contacts"
-  | "projects"
+  | "customers"
+  | "jobs"
   | "services"
   | "offers";
 
@@ -29,8 +29,8 @@ export default function EntityCreatePage({
 }: EntityCreatePageProps) {
   const titleMap: Record<EntityType, string> = {
     organizations: "Create Organization",
-    contacts: "Create Contact",
-    projects: "Create Project",
+    customers: "Create Customer",
+    jobs: "Create Job",
     services: "Create Service",
     offers: "Create Offer",
   };
@@ -40,8 +40,8 @@ export default function EntityCreatePage({
     keyof typeof import("@/lib/forms/form-configs").formConfigs
   > = {
     organizations: "organization",
-    contacts: "contact",
-    projects: "project",
+    customers: "customer",
+    jobs: "job",
     services: "service",
     offers: "offer",
   };
@@ -49,7 +49,7 @@ export default function EntityCreatePage({
   const computedTitle = title || titleMap[entity];
   const entityType = entityTypeMap[entity];
   const isOffer = entity === "offers";
-  const isContact = entity === "contacts";
+  const isCustomer = entity === "customers";
 
   return (
     <EntityErrorBoundary entityName={computedTitle.replace("Create ", "")}>

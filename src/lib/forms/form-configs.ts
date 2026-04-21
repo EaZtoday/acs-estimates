@@ -1,10 +1,10 @@
 import React from "react";
 import type { UnifiedFormField } from "@/components/forms/unified/unified-form";
 import {
-  contactCreateSchema,
+  customerCreateSchema,
   organizationCreateSchema,
   serviceCreateSchema,
-  projectCreateSchema,
+  jobCreateSchema,
   offerCreateSchema,
 } from '@/lib/validation/schemas';
 import { organizationFormFields } from './organization-fields';
@@ -25,15 +25,15 @@ import {
   deleteOrganization,
 } from '@/lib/actions/organizations';
 import {
-  createContact,
-  updateContact,
-  deleteContact,
-} from '@/lib/actions/contacts';
+  createCustomer,
+  updateCustomer,
+  deleteCustomer,
+} from '@/lib/actions/customers';
 import {
-  createProject,
-  updateProject,
-  deleteProject,
-} from '@/lib/actions/projects';
+  createJob,
+  updateJob,
+  deleteJob,
+} from '@/lib/actions/jobs';
 import type { ActionResponse } from '@/lib/actions/utils';
 import type { z } from 'zod';
 
@@ -81,19 +81,27 @@ const LazyCountryField = React.lazy(
   () => import('@/components/forms/unified/country-field')
 );
 
-// Contact form configuration
-export const contactFormFields: UnifiedFormField[] = [
+// Customer form configuration
+export const customerFormFields: UnifiedFormField[] = [
   {
     name: 'basic_info',
     label: 'Basic Information',
     type: 'section',
   },
   {
-    name: 'name',
-    label: 'Name',
+    name: 'first_name',
+    label: 'First Name',
     type: 'text',
     required: true,
-    placeholder: 'Enter contact name',
+    placeholder: 'Enter first name',
+    section: 'basic_info',
+  },
+  {
+    name: 'last_name',
+    label: 'Last Name',
+    type: 'text',
+    required: true,
+    placeholder: 'Enter last name',
     section: 'basic_info',
   },
   {
@@ -104,88 +112,44 @@ export const contactFormFields: UnifiedFormField[] = [
     section: 'basic_info',
   },
   {
-    name: 'organization_id',
-    label: 'Organization',
-    type: 'custom',
-    placeholder: 'Select organization',
-    customRenderer: ({ form, isLocked }) => {
-      return React.createElement(
-        React.Suspense,
-        { fallback: null },
-        React.createElement(LazyOrganizationField, { form, disabled: isLocked })
-      );
-    },
+    name: 'phone',
+    label: 'Phone',
+    type: 'text',
+    placeholder: 'Enter phone number',
     section: 'basic_info',
   },
   {
-    name: 'country',
-    label: 'Country',
-    type: 'custom',
-    placeholder: 'Select country',
-    section: 'basic_info',
-    customRenderer: ({ form, isLocked }) => {
-      return React.createElement(
-        React.Suspense,
-        { fallback: null },
-        React.createElement(LazyCountryField, { form, disabled: isLocked })
-      );
-    },
-  },
-
-  // Professional Information Section
-  {
-    name: 'professional_info',
-    label: 'Professional Information',
+    name: 'address_info',
+    label: 'Address Information',
     type: 'section',
   },
   {
-    name: 'corporate_email',
-    label: 'Work Email',
-    type: 'email',
-    placeholder: 'Work email address',
-    section: 'professional_info',
-  },
-  {
-    name: 'company_role',
-    label: 'Role at Company',
+    name: 'address_line_1',
+    label: 'Street Address',
     type: 'text',
-    placeholder: 'Enter job title or role',
-    section: 'professional_info',
+    placeholder: 'Enter street address',
+    section: 'address_info',
   },
   {
-    name: 'headline',
-    label: 'Headline',
+    name: 'city',
+    label: 'City',
     type: 'text',
-    placeholder: 'Professional headline',
-    section: 'professional_info',
+    placeholder: 'Enter city',
+    section: 'address_info',
   },
   {
-    name: 'location',
-    label: 'Location',
+    name: 'state',
+    label: 'State',
     type: 'text',
-    placeholder: 'City, Country',
-    section: 'professional_info',
-  },
-
-  // Online Presence Section
-  {
-    name: 'online_presence',
-    label: 'Online Presence',
-    type: 'section',
+    placeholder: 'Enter state',
+    section: 'address_info',
   },
   {
-    name: 'linkedin_url',
-    label: 'LinkedIn URL',
+    name: 'zip',
+    label: 'Zip Code',
     type: 'text',
-    placeholder: 'https://linkedin.com/in/...',
-    section: 'online_presence',
-  },
-  {
-    name: 'profile_image_url',
-    label: 'Profile Image URL',
-    type: 'text',
-    placeholder: 'Enter image URL',
-    section: 'online_presence',
+    placeholder: 'Enter zip code',
+    section: 'address_info',
   },
 ];
 
@@ -307,89 +271,113 @@ export const serviceFormFields: UnifiedFormField[] = [
   },
 ];
 
-// Project form configuration
-export const projectFormFields: UnifiedFormField[] = [
+// Job form configuration
+export const jobFormFields: UnifiedFormField[] = [
   {
     name: 'basic_info',
     label: 'Basic Information',
     type: 'section',
   },
   {
-    name: 'title',
-    label: 'Project Title',
+    name: 'type',
+    label: 'Record Type',
+    type: 'select',
+    required: true,
+    options: [
+      { value: 'estimate', label: 'Estimate' },
+      { value: 'job', label: 'Job' },
+    ],
+    section: 'basic_info',
+  },
+  {
+    name: 'customer_id',
+    label: 'Customer ID',
     type: 'text',
     required: true,
-    placeholder: 'Enter project title',
+    placeholder: 'Enter customer UUID',
     section: 'basic_info',
   },
   {
-    name: 'description',
-    label: 'Description',
-    type: 'textarea',
-    rows: 4,
-    placeholder: 'Project description',
-    section: 'basic_info',
-  },
-  {
-    name: 'url',
-    label: 'Project URL',
-    type: 'text',
-    placeholder: 'https://example.com/project',
+    name: 'service_type',
+    label: 'Service Type',
+    type: 'select',
+    options: [
+      { value: 'Exterior Windows', label: 'Exterior Windows' },
+      { value: 'Interior + Exterior', label: 'Interior + Exterior' },
+      { value: 'Gutters', label: 'Gutters' },
+      { value: 'Pressure Washing', label: 'Pressure Washing' },
+    ],
     section: 'basic_info',
   },
 
-  // Project Details Section
+  // Property Details Section
   {
-    name: 'project_details',
-    label: 'Project Details',
+    name: 'property_details',
+    label: 'Property Details',
     type: 'section',
   },
   {
-    name: 'organization_id',
-    label: 'Organization',
-    type: 'custom',
-    required: false,
-    placeholder: 'Select organization',
-    customRenderer: ({ form, isLocked }) => {
-      return React.createElement(
-        React.Suspense,
-        { fallback: null },
-        React.createElement(LazyOrganizationField, { form, disabled: isLocked })
-      );
-    },
-    section: 'project_details',
+    name: 'stories',
+    label: 'Stories',
+    type: 'number',
+    section: 'property_details',
+  },
+  {
+    name: 'panes_count',
+    label: 'Approx. Pane Count',
+    type: 'number',
+    section: 'property_details',
+  },
+  {
+    name: 'hard_water_stains',
+    label: 'Has Hard Water Stains',
+    type: 'toggle',
+    section: 'property_details',
   },
 
-  // Timeline Section
+  // Pricing Section
   {
-    name: 'timeline',
-    label: 'Timeline',
+    name: 'pricing',
+    label: 'Pricing',
     type: 'section',
   },
   {
-    name: 'start_date',
-    label: 'Start Date',
-    type: 'date',
-    placeholder: 'Select start date',
-    section: 'timeline',
+    name: 'price_estimate',
+    label: 'Price Estimate',
+    type: 'number',
+    section: 'pricing',
   },
   {
-    name: 'end_date',
-    label: 'End Date',
-    type: 'date',
-    placeholder: 'Select end date',
-    section: 'timeline',
+    name: 'frequency',
+    label: 'Frequency',
+    type: 'select',
+    options: [
+      { value: 'one-time', label: 'One-time' },
+      { value: 'monthly', label: 'Monthly' },
+      { value: 'quarterly', label: 'Quarterly' },
+      { value: 'annually', label: 'Annually' },
+    ],
+    section: 'pricing',
   },
   {
     name: 'status',
     label: 'Status',
     type: 'select',
     options: [
-      { value: 'Active', label: 'Active' },
-      { value: 'Paused', label: 'Paused' },
-      { value: 'Archived', label: 'Archived' },
+      { value: 'estimate_requested', label: 'Estimate Requested' },
+      { value: 'estimate_scheduled', label: 'Estimate Scheduled' },
+      { value: 'estimate_sent', label: 'Estimate Sent' },
+      { value: 'job_scheduled', label: 'Job Scheduled' },
+      { value: 'job_completed', label: 'Job Completed' },
     ],
-    section: 'timeline',
+    section: 'pricing',
+  },
+  {
+    name: 'notes',
+    label: 'Internal Notes',
+    type: 'textarea',
+    rows: 4,
+    section: 'pricing',
   },
 ];
 
@@ -404,7 +392,7 @@ export const offerFormFields: UnifiedFormField[] = [
     name: 'title',
     label: 'Title',
     type: 'text',
-    placeholder: 'Offer title (e.g. project or deal name)',
+    placeholder: 'Offer title (e.g. job or deal name)',
     hidden: true,
     section: 'basic_info',
     required: false,
@@ -593,15 +581,15 @@ export const formConfigs = {
     updateAction: updateService,
     deleteAction: deleteService,
   },
-  project: {
-    schema: projectCreateSchema,
-    fields: projectFormFields,
-    entityName: 'Project',
-    apiEndpoint: '/api/projects',
-    backLink: '/dashboard/projects',
-    createAction: createProject,
-    updateAction: updateProject,
-    deleteAction: deleteProject,
+  job: {
+    schema: jobCreateSchema,
+    fields: jobFormFields,
+    entityName: 'Job',
+    apiEndpoint: '/api/jobs',
+    backLink: '/dashboard/jobs',
+    createAction: createJob,
+    updateAction: updateJob,
+    deleteAction: deleteJob,
   },
   offer: {
     schema: offerCreateSchema,
@@ -613,14 +601,14 @@ export const formConfigs = {
     updateAction: updateOffer,
     deleteAction: deleteOffer,
   },
-  contact: {
-    schema: contactCreateSchema,
-    fields: contactFormFields,
-    entityName: 'Contact',
-    apiEndpoint: '/api/contacts',
-    backLink: '/dashboard/contacts',
-    createAction: createContact,
-    updateAction: updateContact,
-    deleteAction: deleteContact,
+  customer: {
+    schema: customerCreateSchema,
+    fields: customerFormFields,
+    entityName: 'Customer',
+    apiEndpoint: '/api/customers',
+    backLink: '/dashboard/customers',
+    createAction: createCustomer,
+    updateAction: updateCustomer,
+    deleteAction: deleteCustomer,
   },
 };

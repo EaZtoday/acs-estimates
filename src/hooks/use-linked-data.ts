@@ -8,7 +8,7 @@ import { getOfferDisplayLabel } from "@/lib/utils";
 export interface UseLinkedDataOptions {
   organizationId?: string;
   userId?: string;
-  contactId?: string;
+  customerId?: string;
 }
 
 export interface UnlinkResult {
@@ -18,8 +18,8 @@ export interface UnlinkResult {
 
 export function useLinkedData(options: UseLinkedDataOptions) {
   const { organizationId } = options;
-  const [linkedContacts, setLinkedContacts] = useState<LinkedItem[]>([]);
-  const [linkedProjects, setLinkedProjects] = useState<LinkedItem[]>([]);
+  const [linkedCustomers, setLinkedCustomers] = useState<LinkedItem[]>([]);
+  const [linkedJobs, setLinkedJobs] = useState<LinkedItem[]>([]);
   const [linkedOffers, setLinkedOffers] = useState<LinkedItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -28,8 +28,8 @@ export function useLinkedData(options: UseLinkedDataOptions) {
 
   const fetchLinkedData = useCallback(async () => {
     if (!organizationId) {
-      setLinkedContacts([]);
-      setLinkedProjects([]);
+      setLinkedCustomers([]);
+      setLinkedJobs([]);
       setLinkedOffers([]);
       setIsLoading(false);
       return;
@@ -38,15 +38,15 @@ export function useLinkedData(options: UseLinkedDataOptions) {
     setIsLoading(true);
 
     try {
-      const [{ data: contacts }, { data: projects }, { data: offers }] =
+      const [{ data: customers }, { data: jobs }, { data: offers }] =
         await Promise.all([
           supabase
-            .from("contacts")
+            .from("customers")
             .select("id, name, email, company_role")
             .eq("organization_id", organizationId)
             .order("name"),
           supabase
-            .from("projects")
+            .from("jobs")
             .select("id, title, status")
             .eq("organization_id", organizationId)
             .order("created_at", { ascending: false }),
@@ -57,21 +57,21 @@ export function useLinkedData(options: UseLinkedDataOptions) {
             .order("created_at", { ascending: false }),
         ]);
 
-      setLinkedContacts(
-        ((contacts as any[]) || []).map((contact) => ({
-          id: contact.id,
-          name: contact.name,
-          href: `/dashboard/contacts/${contact.id}`,
-          subtitle: contact.email,
+      setLinkedCustomers(
+        ((customers as any[]) || []).map((customer) => ({
+          id: customer.id,
+          name: customer.name,
+          href: `/dashboard/customers/${customer.id}`,
+          subtitle: customer.email,
         })),
       );
 
-      setLinkedProjects(
-        ((projects as any[]) || []).map((project) => ({
-          id: project.id,
-          name: project.title,
-          href: `/dashboard/projects/${project.id}`,
-          tag: project.status,
+      setLinkedJobs(
+        ((jobs as any[]) || []).map((job) => ({
+          id: job.id,
+          name: job.title,
+          href: `/dashboard/jobs/${job.id}`,
+          tag: job.status,
         })),
       );
 
@@ -94,69 +94,69 @@ export function useLinkedData(options: UseLinkedDataOptions) {
     fetchLinkedData();
   }, [fetchLinkedData]);
 
-  const unlinkContactFromOrganization = useCallback(
-    async (contactToUnlinkId: string): Promise<UnlinkResult> => {
+  const unlinkCustomerFromOrganization = useCallback(
+    async (customerToUnlinkId: string): Promise<UnlinkResult> => {
       if (!organizationId) {
         return { success: false, error: "Missing organization context" };
       }
 
       try {
         const { error } = await supabase
-          .from("contacts")
+          .from("customers")
           .update({ organization_id: null })
-          .eq("id", contactToUnlinkId)
+          .eq("id", customerToUnlinkId)
           .eq("organization_id", organizationId);
 
         if (error) {
-          console.error("Failed to unlink contact:", error);
+          console.error("Failed to unlink customer:", error);
           return { success: false, error: error.message };
         }
 
         await fetchLinkedData();
         return { success: true };
       } catch (error) {
-        console.error("Unexpected error unlinking contact:", error);
-        return { success: false, error: "Unexpected error unlinking contact" };
+        console.error("Unexpected error unlinking customer:", error);
+        return { success: false, error: "Unexpected error unlinking customer" };
       }
     },
     [organizationId, supabase, fetchLinkedData]
   );
 
-  const unlinkProjectFromOrganization = useCallback(
-    async (projectToUnlinkId: string): Promise<UnlinkResult> => {
+  const unlinkJobFromOrganization = useCallback(
+    async (jobToUnlinkId: string): Promise<UnlinkResult> => {
       if (!organizationId) {
         return { success: false, error: "Missing organization context" };
       }
 
       try {
         const { error } = await supabase
-          .from("projects")
+          .from("jobs")
           .update({ organization_id: null })
-          .eq("id", projectToUnlinkId)
+          .eq("id", jobToUnlinkId)
           .eq("organization_id", organizationId);
 
         if (error) {
-          console.error("Failed to unlink project:", error);
+          console.error("Failed to unlink job:", error);
           return { success: false, error: error.message };
         }
 
         await fetchLinkedData();
         return { success: true };
       } catch (error) {
-        console.error("Unexpected error unlinking project:", error);
-        return { success: false, error: "Unexpected error unlinking project" };
+        console.error("Unexpected error unlinking job:", error);
+        return { success: false, error: "Unexpected error unlinking job" };
       }
     },
     [organizationId, supabase, fetchLinkedData]
   );
 
   return {
-    linkedContacts,
-    linkedProjects,
+    linkedCustomers,
+    linkedJobs,
     linkedOffers,
     isLoading,
     refresh: fetchLinkedData,
-    unlinkContactFromOrganization,
-    unlinkProjectFromOrganization,
+    unlinkCustomerFromOrganization,
+    unlinkJobFromOrganization,
   };
 }

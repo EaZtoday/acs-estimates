@@ -147,7 +147,7 @@ export class DynamicFieldManager {
 
 // Predefined relationship configurations
 export const RELATIONSHIP_CONFIGS = {
-  // Organizations for Contacts
+  // Organizations for Customers
   CONTACT_ORGANIZATION: {
     entityType: 'organizations',
     displayField: 'name',
@@ -171,16 +171,16 @@ export const RELATIONSHIP_CONFIGS = {
     })
   },
   
-  // Contacts filtered by organization
+  // Customers filtered by organization
   CONTACTS_BY_ORGANIZATION: (organizationId: string) => ({
-    entityType: 'contacts',
+    entityType: 'customers',
     displayField: 'name',
     valueField: 'id',
     filter: { organization_id: organizationId },
     orderBy: 'name',
-    transform: (contact: Record<string, unknown>) => ({
-      value: contact.id as string,
-      label: `${contact.name as string}${contact.company_role ? ` - ${contact.company_role as string}` : ''}`
+    transform: (customer: Record<string, unknown>) => ({
+      value: customer.id as string,
+      label: `${customer.name as string}${customer.company_role ? ` - ${customer.company_role as string}` : ''}`
     })
   })
 } as const;

@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import DashboardPageWrapper from "@/components/layouts/pages/dashboard-page-wrapper";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
-import MyProjectsSidebar from "@/components/dashboard/my-projects-sidebar";
+import MyJobsSidebar from "@/components/dashboard/my-jobs-sidebar";
 import { generatePageTitle } from "@/lib/metadata-utils";
 import { getDashboardHomeDataCached } from "@/lib/server-data";
 import {
@@ -118,17 +118,17 @@ export default async function DashboardPage() {
   const supabase = await createServerSupabaseClient();
   let stats: {
     organizations: number;
-    contacts: number;
-    projects: number;
+    customers: number;
+    jobs: number;
     offers: number;
   };
-  let activeProjects: any[] = [];
+  let activeJobs: any[] = [];
   let offerRows: RawOfferRow[] = [];
 
   try {
     const data = await getDashboardHomeDataCached(supabase);
     stats = data.stats;
-    activeProjects = data.activeProjects;
+    activeJobs = data.activeJobs;
     offerRows = data.offersForHistory as RawOfferRow[];
   } catch (error) {
     console.error("Error fetching dashboard stats:", error);
@@ -145,32 +145,32 @@ export default async function DashboardPage() {
 
   const cards = [
     {
-      title: "Organizations",
-      value: stats.organizations,
-      icon: Building2,
-      href: "/dashboard/organizations",
-      createHref: "/dashboard/organizations/new",
-    },
-    {
-      title: "Contacts",
-      value: stats.contacts,
+      title: "Customers",
+      value: stats.customers,
       icon: Users,
-      href: "/dashboard/contacts",
-      createHref: "/dashboard/contacts/new",
+      href: "/dashboard/customers",
+      createHref: "/dashboard/customers/new",
     },
     {
-      title: "Projects",
-      value: stats.projects,
-      icon: FolderOpen,
-      href: "/dashboard/projects",
-      createHref: "/dashboard/projects/new",
-    },
-    {
-      title: "Offers",
-      value: stats.offers,
+      title: "Appointments",
+      value: stats.appointments,
       icon: FileText,
-      href: "/dashboard/offers",
-      createHref: "/dashboard/offers/new",
+      href: "/dashboard/schedule",
+      createHref: null,
+    },
+    {
+      title: "Estimates & Jobs",
+      value: stats.jobs,
+      icon: FolderOpen,
+      href: "/dashboard/jobs",
+      createHref: "/dashboard/jobs/new",
+    },
+    {
+      title: "Scheduled SMS",
+      value: stats.messages,
+      icon: FileText,
+      href: "/dashboard/scheduled-messages",
+      createHref: null,
     },
   ];
 
@@ -224,9 +224,9 @@ export default async function DashboardPage() {
           />
         </div>
 
-        {/* Active projects */}
+        {/* Active jobs */}
         <div className="grid grid-cols-1 gap-2 sm:gap-3 lg:gap-4">
-          <MyProjectsSidebar projects={activeProjects || []} />
+          <MyJobsSidebar jobs={activeJobs || []} />
         </div>
       </div>
     </DashboardPageWrapper>

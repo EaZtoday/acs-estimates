@@ -22,8 +22,8 @@ interface CommandPaletteProps {
   onOpenChange?: (open: boolean) => void;
   initialData?: {
     organizations: ContentItem[];
-    contacts: ContentItem[];
-    projects: ContentItem[];
+    customers: ContentItem[];
+    jobs: ContentItem[];
     offers: ContentItem[];
     services: ContentItem[];
   };
@@ -54,14 +54,14 @@ export function CommandPalette({
 
   const [contentData, setContentData] = React.useState<{
     organizations: ContentItem[];
-    contacts: ContentItem[];
-    projects: ContentItem[];
+    customers: ContentItem[];
+    jobs: ContentItem[];
     offers: ContentItem[];
     services: ContentItem[];
   }>({
     organizations: initialData?.organizations ?? [],
-    contacts: initialData?.contacts ?? [],
-    projects: initialData?.projects ?? [],
+    customers: initialData?.customers ?? [],
+    jobs: initialData?.jobs ?? [],
     offers: initialData?.offers ?? [],
     services: initialData?.services ?? [],
   });
@@ -78,8 +78,8 @@ export function CommandPalette({
     if (query.length < 2) {
       setContentData({
         organizations: [],
-        contacts: [],
-        projects: [],
+        customers: [],
+        jobs: [],
         offers: [],
         services: [],
       });
@@ -270,7 +270,7 @@ export function CommandPalette({
                         value={item.href}
                         onSelect={handleSelect}
                       >
-                        {section === "contacts" ||
+                        {section === "customers" ||
                         section === "organizations" ? (
                           <ProfileImage
                             src={item.imageUrl}

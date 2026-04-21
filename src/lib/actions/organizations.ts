@@ -35,7 +35,7 @@ export async function createOrganization(
     // Revalidate paths
     revalidatePath("/dashboard/organizations");
     revalidateTag("organizations", "max");
-    revalidateTag("contacts", "max");
+    revalidateTag("customers", "max");
     revalidateTag("dashboard", "max");
     revalidateTag("settings", "max");
 
@@ -92,7 +92,7 @@ export async function updateOrganization(
     revalidatePath("/dashboard/organizations");
     revalidatePath(`/dashboard/organizations/${organizationId}`);
     revalidateTag("organizations", "max");
-    revalidateTag("contacts", "max");
+    revalidateTag("customers", "max");
     revalidateTag("dashboard", "max");
     revalidateTag("settings", "max");
 
@@ -119,7 +119,7 @@ export async function deleteOrganization(
     // Revalidate paths
     revalidatePath("/dashboard/organizations");
     revalidateTag("organizations", "max");
-    revalidateTag("contacts", "max");
+    revalidateTag("customers", "max");
     revalidateTag("dashboard", "max");
     revalidateTag("settings", "max");
     
@@ -128,7 +128,7 @@ export async function deleteOrganization(
     // Handle foreign key constraint errors specifically
     if (isForeignKeyConstraintError(error)) {
       return createActionResponse(null, 
-        "Cannot delete this organization because it has related data (contacts, offers, etc.)."
+        "Cannot delete this organization because it has related data (customers, offers, etc.)."
       );
     }
     

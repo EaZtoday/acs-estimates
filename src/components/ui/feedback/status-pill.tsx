@@ -5,7 +5,7 @@ interface StatusPillProps {
   type:
     | "lead-status"
     | "offer-status"
-    | "project-status"
+    | "job-status"
     | "service-group"
     | "service-category"
     | "service-type"
@@ -36,22 +36,18 @@ export function StatusPill({ value, type, className }: StatusPillProps) {
             return "secondary";
         }
 
-      case "project-status":
+      case "job-status":
         switch (normalizedValue) {
-          case "planning":
-            return "planning";
-          case "in-progress":
-            return "in-progress";
-          case "review":
-            return "review";
-          case "completed":
-            return "completed";
-          case "on-hold":
-            return "on-hold";
-          case "cancelled":
-            return "cancelled";
-          case "archived":
-            return "archived";
+          case "estimate_requested":
+            return "estimate-requested";
+          case "estimate_scheduled":
+            return "estimate-scheduled";
+          case "estimate_sent":
+            return "estimate-sent";
+          case "job_scheduled":
+            return "job-scheduled";
+          case "job_completed":
+            return "job-completed";
           default:
             return "secondary";
         }
@@ -217,6 +213,11 @@ export function StatusPill({ value, type, className }: StatusPillProps) {
           | "web"
           | "token-active"
           | "token-expired"
+          | "estimate-requested"
+          | "estimate-scheduled"
+          | "estimate-sent"
+          | "job-scheduled"
+          | "job-completed"
       }
       className={className}
     >

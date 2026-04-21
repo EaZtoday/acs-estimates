@@ -8,8 +8,8 @@ import { createBrowserSupabaseClient } from "@/lib/supabase-browser";
 import { Building2, FileText, Package } from "lucide-react";
 import { getOfferDisplayLabel } from "@/lib/utils";
 
-interface ProjectRelationsPanelProps {
-  projectId: string;
+interface JobRelationsPanelProps {
+  jobId: string;
 }
 
 interface DerivedService {
@@ -23,9 +23,9 @@ interface DerivedService {
   group_type?: string;
 }
 
-export default function ProjectRelationsPanel({
-  projectId,
-}: ProjectRelationsPanelProps) {
+export default function JobRelationsPanel({
+  jobId,
+}: JobRelationsPanelProps) {
   const [organization, setOrganization] = useState<LinkedItem | null>(null);
   const [offers, setOffers] = useState<LinkedItem[]>([]);
   const [derivedServices, setDerivedServices] = useState<DerivedService[]>([]);
@@ -36,18 +36,18 @@ export default function ProjectRelationsPanel({
   useEffect(() => {
     async function load() {
       try {
-        // Fetch the project with its organization
-        const { data: project } = await supabase
-          .from("projects")
+        // Fetch the job with its organization
+        const { data: job } = await supabase
+          .from("jobs")
           .select(
             "id, organization_id, organization:organizations(id, name)",
           )
-          .eq("id", projectId)
+          .eq("id", jobId)
           .single();
 
-        const projectRow = project as any;
-        if (projectRow?.organization && typeof projectRow.organization === "object") {
-          const org = projectRow.organization as { id: string; name: string };
+        const jobRow = job as any;
+        if (jobRow?.organization && typeof jobRow.organization === "object") {
+          const org = jobRow.organization as { id: string; name: string };
           setOrganization({
             id: org.id,
             name: org.name,
@@ -149,14 +149,14 @@ export default function ProjectRelationsPanel({
           setOrganization(null);
         }
       } catch (error) {
-        console.error("Error loading project relations:", error);
+        console.error("Error loading job relations:", error);
       } finally {
         setIsLoading(false);
       }
     }
 
     load();
-  }, [projectId, supabase]);
+  }, [jobId, supabase]);
 
   return (
     <div className="space-y-4">

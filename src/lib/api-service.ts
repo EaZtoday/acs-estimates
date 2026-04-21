@@ -7,8 +7,8 @@ export interface BaseEntity {
 
 export type TableName =
   | 'organizations'
-  | 'contacts'
-  | 'projects'
+  | 'customers'
+  | 'jobs'
   | 'offers'
   | 'services'
   | 'offer_services'

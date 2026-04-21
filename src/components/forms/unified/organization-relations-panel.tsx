@@ -15,12 +15,12 @@ export default function OrganizationRelationsPanel({
   organizationId,
 }: OrganizationRelationsPanelProps) {
   const {
-    linkedContacts,
-    linkedProjects,
+    linkedCustomers,
+    linkedJobs,
     linkedOffers,
     isLoading,
-    unlinkContactFromOrganization,
-    unlinkProjectFromOrganization,
+    unlinkCustomerFromOrganization,
+    unlinkJobFromOrganization,
   } = useLinkedData({ organizationId });
 
   const unlinkItem = async (
@@ -55,41 +55,41 @@ export default function OrganizationRelationsPanel({
     <div className="space-y-4">
       <LinkedItems
         config={{
-          title: "Contacts",
-          items: linkedContacts,
-          createNewHref: `/dashboard/contacts/new?organization_id=${organizationId}`,
-          createNewLabel: "Add Contact",
-          emptyMessage: "No contacts",
+          title: "Customers",
+          items: linkedCustomers,
+          createNewHref: `/dashboard/customers/new?organization_id=${organizationId}`,
+          createNewLabel: "Add Customer",
+          emptyMessage: "No customers",
           isLoading,
           icon: Users,
           onRemove: (item) =>
             unlinkItem(
               item,
-              unlinkContactFromOrganization,
-              "Contact removed from organization",
+              unlinkCustomerFromOrganization,
+              "Customer removed from organization",
             ),
           getRemoveConfirmation: (item) =>
-            `Remove ${item.name || "this contact"} from the organization?`,
+            `Remove ${item.name || "this customer"} from the organization?`,
         }}
       />
 
       <LinkedItems
         config={{
-          title: "Projects",
-          items: linkedProjects,
-          createNewHref: `/dashboard/projects/new?organization_id=${organizationId}`,
-          createNewLabel: "Add Project",
-          emptyMessage: "No projects",
+          title: "Jobs",
+          items: linkedJobs,
+          createNewHref: `/dashboard/jobs/new?organization_id=${organizationId}`,
+          createNewLabel: "Add Job",
+          emptyMessage: "No jobs",
           isLoading,
           icon: NotebookTabs,
           onRemove: (item) =>
             unlinkItem(
               item,
-              unlinkProjectFromOrganization,
-              "Project removed from organization",
+              unlinkJobFromOrganization,
+              "Job removed from organization",
             ),
           getRemoveConfirmation: (item) =>
-            `Remove ${item.name || "this project"} from the organization?`,
+            `Remove ${item.name || "this job"} from the organization?`,
         }}
       />
 

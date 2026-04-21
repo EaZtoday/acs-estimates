@@ -122,11 +122,11 @@ export default function Sidebar({ userEmail = null }: SidebarProps) {
           <SidebarHeader className="h-16 px-3.5">
             <div className="flex h-full items-center w-full">
               <span
-                className={`text-lg font-semibold text-[var(--foreground)] transition-opacity duration-200 whitespace-nowrap ${
+                className={`text-lg font-black text-slate-900 tracking-tighter transition-opacity duration-200 whitespace-nowrap ${
                   effectiveCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
                 }`}
               >
-                Core
+                ALEXANDER'S <span className="text-teal-600 uppercase text-[10px] tracking-widest font-black">Admin</span>
               </span>
             </div>
           </SidebarHeader>

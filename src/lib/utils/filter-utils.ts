@@ -87,7 +87,7 @@ export function applyOrganizationFilters<T extends Record<string, unknown>>(
   });
 }
 
-export function applyContactFilters<T extends Record<string, unknown>>(
+export function applyCustomerFilters<T extends Record<string, unknown>>(
   data: T[],
   filters: FilterValue[]
 ): T[] {
@@ -133,7 +133,7 @@ export function applyOfferFilters<T extends Record<string, unknown>>(
   });
 }
 
-export function applyProjectFilters<T extends Record<string, unknown>>(
+export function applyJobFilters<T extends Record<string, unknown>>(
   data: T[],
   filters: FilterValue[]
 ): T[] {

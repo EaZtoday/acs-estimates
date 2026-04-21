@@ -6,6 +6,8 @@ import {
   Users,
   NotebookTabs,
   Package,
+  Calendar,
+  MessageSquare,
 } from "lucide-react";
 
 export interface NavigationItem {
@@ -24,24 +26,24 @@ export function getDashboardNavigation(): NavigationItem[] {
       exact: true,
     },
     {
-      name: "Performance",
-      href: "/dashboard/performance",
-      icon: Gauge,
+      name: "Schedule",
+      href: "/dashboard/schedule",
+      icon: Calendar,
     },
     {
-      name: "Organizations",
-      href: "/dashboard/organizations",
-      icon: Building2,
-    },
-    {
-      name: "Contacts",
-      href: "/dashboard/contacts",
+      name: "Customers",
+      href: "/dashboard/customers",
       icon: Users,
     },
     {
-      name: "Projects",
-      href: "/dashboard/projects",
+      name: "Estimates & Jobs",
+      href: "/dashboard/jobs",
       icon: NotebookTabs,
+    },
+    {
+      name: "Scheduled Messages",
+      href: "/dashboard/messages",
+      icon: MessageSquare,
     },
     {
       name: "Offers",

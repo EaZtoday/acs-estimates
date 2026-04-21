@@ -12,7 +12,7 @@ export {
 
 // Export entity-specific actions
 export * from "./organizations";
-export * from "./contacts";
+export * from "./customers";
 export * from "./services";
-export * from "./projects";
+export * from "./jobs";
 export * from "./offers";

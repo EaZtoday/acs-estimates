@@ -4,12 +4,12 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import UnifiedForm from "@/components/forms/unified/unified-form";
 import { formConfigs } from "@/lib/forms/form-configs";
-import { LinkedInDataHandler } from "@/components/entities/contacts/linkedin-data-handler";
+import { LinkedInDataHandler } from "@/components/entities/customers/linkedin-data-handler";
 import {
-  createContact,
-  updateContact,
-  deleteContact,
-} from "@/lib/actions/contacts";
+  createCustomer,
+  updateCustomer,
+  deleteCustomer,
+} from "@/lib/actions/customers";
 import {
   createOrganization,
   updateOrganization,
@@ -21,10 +21,10 @@ import {
   deleteService,
 } from "@/lib/actions/services";
 import {
-  createProject,
-  updateProject,
-  deleteProject,
-} from "@/lib/actions/projects";
+  createJob,
+  updateJob,
+  deleteJob,
+} from "@/lib/actions/jobs";
 import {
   createOffer,
   updateOffer,
@@ -66,7 +66,7 @@ export default function UnifiedFormClient({
     () => ({
       ...defaultValues,
       ...(linkedinData &&
-      (entityType === "contact" || entityType === "organization")
+      (entityType === "customer" || entityType === "organization")
         ? linkedinData
         : {}),
     }),
@@ -75,11 +75,11 @@ export default function UnifiedFormClient({
 
   const getServerActions = () => {
     switch (entityType) {
-      case "contact":
+      case "customer":
         return {
-          createAction: createContact,
-          updateAction: updateContact,
-          deleteAction: deleteContact,
+          createAction: createCustomer,
+          updateAction: updateCustomer,
+          deleteAction: deleteCustomer,
         };
       case "organization":
         return {
@@ -93,11 +93,11 @@ export default function UnifiedFormClient({
           updateAction: updateService,
           deleteAction: deleteService,
         };
-      case "project":
+      case "job":
         return {
-          createAction: createProject,
-          updateAction: updateProject,
-          deleteAction: deleteProject,
+          createAction: createJob,
+          updateAction: updateJob,
+          deleteAction: deleteJob,
         };
       case "offer":
         return {
@@ -114,11 +114,11 @@ export default function UnifiedFormClient({
 
   return (
     <>
-      {(entityType === "contact" || entityType === "organization") &&
+      {(entityType === "customer" || entityType === "organization") &&
         mode === "create" && (
           <LinkedInDataHandler
             onDataReceived={handleLinkedInData}
-            entityType={entityType === "contact" ? "contact" : "organization"}
+            entityType={entityType === "customer" ? "customer" : "organization"}
           />
         )}
 

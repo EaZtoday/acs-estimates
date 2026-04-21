@@ -274,7 +274,7 @@ UnifiedFormProps) {
         }
         // Ensure array fields are properly initialized
         else if (
-          field.name === "contact_ids" &&
+          field.name === "customer_ids" &&
           !Array.isArray(processedDefaultValues[field.name])
         ) {
           processedDefaultValues[field.name] = [];
@@ -405,7 +405,7 @@ UnifiedFormProps) {
     if (finalFields) {
       finalFields.forEach((field) => {
         if (
-          field.name === "contact_ids" &&
+          field.name === "customer_ids" &&
           !Array.isArray(processedData[field.name])
         ) {
           processedData[field.name] = [];

@@ -41,7 +41,7 @@ export default function PublicOfferClient({ id }: Props) {
 
       if (!res.ok) {
         if (res.status === 404) {
-          setError("Offer not found. Please check the link or contact us.");
+          setError("Offer not found. Please check the link or customer us.");
         } else {
           setError("Unable to load offer. Please try again.");
         }

@@ -28,9 +28,9 @@ export const FIELD_ICONS: Record<string, React.ComponentType<{ className?: strin
   corporate_entity_id: Building,
   corporate_entity: Building,
   
-  // Contact-related fields
-  contact_id: Users,
-  contact: Users,
+  // Customer-related fields
+  customer_id: Users,
+  customer: Users,
   owner_id: Users,
   created_by: Users,
   
@@ -38,9 +38,9 @@ export const FIELD_ICONS: Record<string, React.ComponentType<{ className?: strin
   offer_id: FileText,
   offer: FileText,
   
-  // Project-related fields
-  project_id: FileText,
-  project: FileText,
+  // Job-related fields
+  job_id: FileText,
+  job: FileText,
   
   // Service-related fields
   service_id: Briefcase,
@@ -60,7 +60,7 @@ export const FIELD_ICONS: Record<string, React.ComponentType<{ className?: strin
   created_at: Clock,
   updated_at: Clock,
   
-  // Contact fields
+  // Customer fields
   email: Mail,
   phone: Phone,
   address: MapPin,

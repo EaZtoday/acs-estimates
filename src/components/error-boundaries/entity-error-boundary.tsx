@@ -57,7 +57,7 @@ export class EntityErrorBoundary extends Component<
           <p className="text-neutral-600 text-center max-w-md">
             Something went wrong while loading{" "}
             {this.props.entityName.toLowerCase()} data. Please try again or
-            contact support if the problem persists.
+            customer support if the problem persists.
           </p>
           <Button
             onClick={this.handleRetry}

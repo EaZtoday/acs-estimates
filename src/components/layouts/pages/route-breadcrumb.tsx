@@ -18,9 +18,9 @@ function formatSegment(segment: string): string {
     offers: "Offers",
     services: "Services",
     settings: "Settings",
-    contacts: "Contacts",
+    customers: "Customers",
     organizations: "Organizations",
-    projects: "Projects",
+    jobs: "Jobs",
     new: "New",
     edit: "Edit",
   };

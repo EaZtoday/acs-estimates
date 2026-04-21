@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/primitives/button";
 import { Edit, ExternalLink, User } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
-interface Contact {
+interface Customer {
   id: string;
   name: string;
   email: string;
@@ -19,66 +19,66 @@ interface Contact {
   country?: string;
 }
 
-interface LinkedContactsProps {
+interface LinkedCustomersProps {
   organizationId: string;
 }
 
-export default function LinkedContacts({
+export default function LinkedCustomers({
   organizationId,
-}: LinkedContactsProps) {
+}: LinkedCustomersProps) {
   const router = useRouter();
-  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchContacts() {
+    async function fetchCustomers() {
       try {
         const supabase = createBrowserSupabaseClient();
         const { data, error } = await supabase
-          .from("contacts")
+          .from("customers")
           .select("*")
           .eq("organization_id", organizationId)
           .order("name");
 
         if (error) {
-          console.error("Error fetching contacts:", error);
-          setError("Failed to load contacts");
+          console.error("Error fetching customers:", error);
+          setError("Failed to load customers");
         } else {
-          setContacts(data || []);
+          setCustomers(data || []);
         }
       } catch (err) {
-        console.error("Error fetching contacts:", err);
-        setError("Failed to load contacts");
+        console.error("Error fetching customers:", err);
+        setError("Failed to load customers");
       } finally {
         setIsLoading(false);
       }
     }
 
     if (organizationId) {
-      fetchContacts();
+      fetchCustomers();
     }
   }, [organizationId]);
 
-  const handleCreateContact = () => {
-    router.push(`/dashboard/contacts/new?organization_id=${organizationId}`);
+  const handleCreateCustomer = () => {
+    router.push(`/dashboard/customers/new?organization_id=${organizationId}`);
   };
 
-  const handleEditContact = (contactId: string) => {
-    router.push(`/dashboard/contacts/${contactId}`);
+  const handleEditCustomer = (customerId: string) => {
+    router.push(`/dashboard/customers/${customerId}`);
   };
 
-  const handleViewContact = (contactId: string) => {
-    router.push(`/dashboard/contacts/${contactId}`);
+  const handleViewCustomer = (customerId: string) => {
+    router.push(`/dashboard/customers/${customerId}`);
   };
 
   const formatLocal = (dateString: string) => formatDate(dateString);
 
   if (error) {
     return (
-      <LinkedData title="Linked Contacts">
+      <LinkedData title="Linked Customers">
         <div className="text-center py-8">
-          <p className="text-red-600">Error loading contacts: {error}</p>
+          <p className="text-red-600">Error loading customers: {error}</p>
           <Button onClick={() => window.location.reload()} className="mt-2">
             Retry
           </Button>
@@ -89,26 +89,26 @@ export default function LinkedContacts({
 
   return (
     <LinkedData
-      title="Linked Contacts"
-      subtitle={`${contacts.length} contact${
-        contacts.length !== 1 ? "s" : ""
+      title="Linked Customers"
+      subtitle={`${customers.length} customer${
+        customers.length !== 1 ? "s" : ""
       } associated with this organization`}
-      onAddNew={handleCreateContact}
-      addButtonText="Add Contact"
+      onAddNew={handleCreateCustomer}
+      addButtonText="Add Customer"
       isLoading={isLoading}
     >
-      {contacts.length === 0 ? (
+      {customers.length === 0 ? (
         <LinkedDataEmptyState
-          title="No contacts yet"
-          description="Add contacts to this organization to get started."
-          actionText="Add Contact"
-          onAction={handleCreateContact}
+          title="No customers yet"
+          description="Add customers to this organization to get started."
+          actionText="Add Customer"
+          onAction={handleCreateCustomer}
         />
       ) : (
         <div className="space-y-3">
-          {contacts.map((contact) => (
+          {customers.map((customer) => (
             <div
-              key={contact.id}
+              key={customer.id}
               className="flex items-center justify-between p-4 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -118,18 +118,18 @@ export default function LinkedContacts({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3">
                     <h4 className="text-sm font-medium text-neutral-900 truncate">
-                      {contact.name}
+                      {customer.name}
                     </h4>
-                    {contact.company_role && (
+                    {customer.company_role && (
                       <span className="text-xs text-neutral-500 bg-neutral-100 px-2 py-1 rounded">
-                        {contact.company_role}
+                        {customer.company_role}
                       </span>
                     )}
                   </div>
                   <div className="mt-1 flex items-center gap-4 text-xs text-neutral-500">
-                    <span className="truncate">{contact.email}</span>
-                    {contact.country && <span>{contact.country}</span>}
-                    <span>Joined: {formatLocal(contact.created_at)}</span>
+                    <span className="truncate">{customer.email}</span>
+                    {customer.country && <span>{customer.country}</span>}
+                    <span>Joined: {formatLocal(customer.created_at)}</span>
                   </div>
                 </div>
               </div>
@@ -137,7 +137,7 @@ export default function LinkedContacts({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handleViewContact(contact.id)}
+                  onClick={() => handleViewCustomer(customer.id)}
                 >
                   <ExternalLink className="h-3 w-3 mr-1" />
                   View
@@ -145,7 +145,7 @@ export default function LinkedContacts({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handleEditContact(contact.id)}
+                  onClick={() => handleEditCustomer(customer.id)}
                 >
                   <Edit className="h-3 w-3 mr-1" />
                   Edit

@@ -40,16 +40,16 @@ export function useOrganizations(initialData?: any[]) {
   return useEntityData({ entity: 'organizations', initialData });
 }
 
-export function useContacts(initialData?: any[]) {
-  return useEntityData({ entity: 'contacts', initialData });
+export function useCustomers(initialData?: any[]) {
+  return useEntityData({ entity: 'customers', initialData });
 }
 
 export function useOffers(initialData?: any[]) {
   return useEntityData({ entity: 'offers', initialData });
 }
 
-export function useProjects(initialData?: any[]) {
-  return useEntityData({ entity: 'projects', initialData });
+export function useJobs(initialData?: any[]) {
+  return useEntityData({ entity: 'jobs', initialData });
 }
 
 export function useServices(initialData?: any[]) {

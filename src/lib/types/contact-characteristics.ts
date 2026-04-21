@@ -1,13 +1,13 @@
-export interface ContactCharacteristicConfig {
+export interface CustomerCharacteristicConfig {
   id: string;
   name: string;
   created_at: string;
 }
 
-export interface ContactCharacteristics {
+export interface CustomerCharacteristics {
   [key: string]: boolean;
 }
 
-export interface ContactCharacteristicFormData {
+export interface CustomerCharacteristicFormData {
   name: string;
 }

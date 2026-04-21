@@ -76,7 +76,7 @@ export function validateFormData<S extends z.ZodTypeAny>(
     // Handle unchecked checkboxes - set common boolean fields to false if they're missing
     const commonBooleanFields = [
       'is_agency', 'is_recurring', 'allow_multiple', 'is_default',
-      'event_timeline', 'budget_availability', 'stakeholder_buy_in', 'previous_engagement', 'project_fit',
+      'event_timeline', 'budget_availability', 'stakeholder_buy_in', 'previous_engagement', 'job_fit',
       // Offers toggles
       'is_accepted'
     ];
@@ -87,7 +87,7 @@ export function validateFormData<S extends z.ZodTypeAny>(
     }
 
     // Handle array fields that might come as strings
-    const arrayFields = ['contact_ids'];
+    const arrayFields = ['customer_ids'];
     for (const field of arrayFields) {
       if (field in data) {
         const value = data[field];
@@ -224,7 +224,7 @@ export function getDuplicateConstraintMessage(error: unknown, fieldName: string)
     const message = String(errorObj.message || "");
     
     if (message.includes("users_email_key") || message.includes("email")) {
-      return `A contact with this ${fieldName} already exists. Please use a different ${fieldName} or update the existing contact.`;
+      return `A customer with this ${fieldName} already exists. Please use a different ${fieldName} or update the existing customer.`;
     }
     
     return `A record with this ${fieldName} already exists. Please use a different ${fieldName}.`;

@@ -16,7 +16,7 @@ interface CommandPaletteProviderProps {
       imageUrl?: string;
       fallback?: string;
     }>;
-    contacts: Array<{
+    customers: Array<{
       id: string;
       name: string;
       href: string;
@@ -24,7 +24,7 @@ interface CommandPaletteProviderProps {
       imageUrl?: string;
       fallback?: string;
     }>;
-    projects: Array<{
+    jobs: Array<{
       id: string;
       name: string;
       href: string;

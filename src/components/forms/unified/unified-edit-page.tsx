@@ -20,15 +20,15 @@ import {
   EditPageRelationsSection,
 } from "@/components/layouts/pages/edit-page-layout";
 import OrganizationRelationsPanel from "./organization-relations-panel";
-import ContactRelationsPanel from "./contact-relations-panel";
-import ProjectRelationsPanel from "./project-relations-panel";
+import CustomerRelationsPanel from "./customer-relations-panel";
+import JobRelationsPanel from "./job-relations-panel";
 import ServicesPanel from "./services-panel";
 
 interface UnifiedEditPageProps {
   entity:
     | "organization"
-    | "contact"
-    | "project"
+    | "customer"
+    | "job"
     | "service"
     | "offer";
   id: string;
@@ -54,8 +54,8 @@ export default async function UnifiedEditPage({
   let entityData: Record<string, unknown> | null = null;
   try {
     switch (entity) {
-      case "contact":
-        entityData = await getEntityWithRelations(supabase, "contacts", id, {
+      case "customer":
+        entityData = await getEntityWithRelations(supabase, "customers", id, {
           "organization:organizations(name, legal_name, country)": true,
         });
         break;
@@ -69,8 +69,8 @@ export default async function UnifiedEditPage({
       case "service":
         entityData = await getEntityWithRelations(supabase, "services", id);
         break;
-      case "project":
-        entityData = await getEntityWithRelations(supabase, "projects", id, {
+      case "job":
+        entityData = await getEntityWithRelations(supabase, "jobs", id, {
           "organization:organizations(name, legal_name, country)": true,
         });
         break;
@@ -105,10 +105,10 @@ export default async function UnifiedEditPage({
   const additionalData = await (async () => {
     const base = {};
 
-    if (entity === "contact") {
-      const [organizations, projects] = await Promise.all([
+    if (entity === "customer") {
+      const [organizations, jobs] = await Promise.all([
         getEntitiesWithRelations(supabase, "organizations", {}, {}, { column: "name", ascending: true }),
-        getEntitiesWithRelations(supabase, "projects", {
+        getEntitiesWithRelations(supabase, "jobs", {
           "organization:organizations(name, legal_name, country)": true,
         }),
       ]);
@@ -116,7 +116,7 @@ export default async function UnifiedEditPage({
         id: o.id,
         name: o.name,
       }));
-      const project_options = projects.map((p: any) => ({
+      const job_options = jobs.map((p: any) => ({
         id: p.id,
         title: p.title,
         organization_id: (p as { organization_id?: string }).organization_id,
@@ -126,24 +126,24 @@ export default async function UnifiedEditPage({
       return {
         ...base,
         organization_options,
-        project_options,
+        job_options,
       };
     }
     if (entity === "organization") {
-      const [contacts, projects] = await Promise.all([
-        getEntitiesWithRelations(supabase, "contacts", {
+      const [customers, jobs] = await Promise.all([
+        getEntitiesWithRelations(supabase, "customers", {
           "organization:organizations(name)": true,
         }),
-        getEntitiesWithRelations(supabase, "projects", {
+        getEntitiesWithRelations(supabase, "jobs", {
           "organization:organizations(name, legal_name, country)": true,
         }),
       ]);
-      const contact_options = contacts.map((c: any) => ({
+      const customer_options = customers.map((c: any) => ({
         id: c.id,
         name: c.name,
         organization_id: (c as { organization_id?: string }).organization_id,
       }));
-      const project_options = projects.map((p: any) => ({
+      const job_options = jobs.map((p: any) => ({
         id: p.id,
         title: p.title,
         organization_id: (p as { organization_id?: string }).organization_id,
@@ -152,31 +152,31 @@ export default async function UnifiedEditPage({
       }));
       return {
         ...base,
-        contact_options,
-        project_options,
+        customer_options,
+        job_options,
       };
     }
-    if (entity === "project") {
-      // For projects, ensure we always load the specific organization that is already associated
-      const projectData = entityData as any;
+    if (entity === "job") {
+      // For jobs, ensure we always load the specific organization that is already associated
+      const jobData = entityData as any;
       const organization_options: Array<{ id: string; name: string }> = [];
 
       // Handle organization - prefer relation data, but fallback to fetching if ID exists
-      if (projectData.organization) {
+      if (jobData.organization) {
         organization_options.push({
-          id: projectData.organization.id,
+          id: jobData.organization.id,
           name:
-            projectData.organization.name ||
-            projectData.organization.legal_name ||
+            jobData.organization.name ||
+            jobData.organization.legal_name ||
             "Unknown",
         });
-      } else if (projectData.organization_id) {
+      } else if (jobData.organization_id) {
         // Fallback: fetch organization directly if relation wasn't loaded
         try {
           const { data: org } = await supabase
             .from("organizations")
             .select("id, name, legal_name")
-            .eq("id", projectData.organization_id)
+            .eq("id", jobData.organization_id)
             .single();
           if (org) {
             organization_options.push({
@@ -185,7 +185,7 @@ export default async function UnifiedEditPage({
             });
           }
         } catch (error) {
-          console.error("Failed to fetch organization for project:", error);
+          console.error("Failed to fetch organization for job:", error);
         }
       }
 
@@ -268,10 +268,10 @@ export default async function UnifiedEditPage({
     switch (entity) {
       case "organization":
         return <OrganizationRelationsPanel organizationId={id} />;
-      case "contact":
-        return <ContactRelationsPanel contactId={id} />;
-      case "project":
-        return <ProjectRelationsPanel projectId={id} />;
+      case "customer":
+        return <CustomerRelationsPanel customerId={id} />;
+      case "job":
+        return <JobRelationsPanel jobId={id} />;
       default:
         return null;
     }

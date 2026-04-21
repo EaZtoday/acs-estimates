@@ -6,10 +6,10 @@ const STATIC_CACHE_CONFIG = {
   tags: ['static-data']
 };
 
-export const getStaticContacts = unstable_cache(
+export const getStaticCustomers = unstable_cache(
   async (supabase: SupabaseClient, organizationId?: string) => {
     let query = supabase
-      .from('contacts')
+      .from('customers')
       .select(`
         *,
         organization:organizations(name, legal_name, country)
@@ -21,10 +21,10 @@ export const getStaticContacts = unstable_cache(
     }
 
     const { data, error } = await query;
-    if (error) throw new Error('Failed to fetch contacts');
+    if (error) throw new Error('Failed to fetch customers');
     return data || [];
   },
-  ['static-contacts'],
+  ['static-customers'],
   STATIC_CACHE_CONFIG
 );
 
@@ -34,7 +34,7 @@ export const getStaticOrganizations = unstable_cache(
       .from('organizations')
       .select(`
         *,
-        contacts!inner(count)
+        customers!inner(count)
       `)
       .order('name', { ascending: true });
 
@@ -42,7 +42,7 @@ export const getStaticOrganizations = unstable_cache(
 
     return (data || []).map(org => ({
       ...org,
-      contact_count: Array.isArray(org.contacts) ? org.contacts.length : 0
+      customer_count: Array.isArray(org.customers) ? org.customers.length : 0
     }));
   },
   ['static-organizations'],
@@ -76,10 +76,10 @@ export const getStaticOffers = unstable_cache(
   STATIC_CACHE_CONFIG
 );
 
-export const getStaticProjects = unstable_cache(
+export const getStaticJobs = unstable_cache(
   async (supabase: SupabaseClient, organizationId?: string) => {
     let query = supabase
-      .from('projects')
+      .from('jobs')
       .select(`
         *,
         organization:organizations(name, legal_name, country)
@@ -91,10 +91,10 @@ export const getStaticProjects = unstable_cache(
     }
 
     const { data, error } = await query;
-    if (error) throw new Error('Failed to fetch projects');
+    if (error) throw new Error('Failed to fetch jobs');
     return data || [];
   },
-  ['static-projects'],
+  ['static-jobs'],
   STATIC_CACHE_CONFIG
 );
 
@@ -122,8 +122,8 @@ export async function invalidateStaticCache(entityType: string) {
 export async function refreshStaticData(entityType: string, supabase: SupabaseClient) {
   try {
     switch (entityType) {
-      case 'contacts':
-        await getStaticContacts(supabase);
+      case 'customers':
+        await getStaticCustomers(supabase);
         break;
       case 'organizations':
         await getStaticOrganizations(supabase);
@@ -131,8 +131,8 @@ export async function refreshStaticData(entityType: string, supabase: SupabaseCl
       case 'offers':
         await getStaticOffers(supabase);
         break;
-      case 'projects':
-        await getStaticProjects(supabase);
+      case 'jobs':
+        await getStaticJobs(supabase);
         break;
       case 'services':
         await getStaticServices(supabase);

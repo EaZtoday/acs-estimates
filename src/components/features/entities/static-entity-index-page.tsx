@@ -3,10 +3,11 @@ import type { EntityFilterOptions } from "@/lib/server-data";
 interface StaticEntityIndexPageProps {
   entity:
     | "organizations"
-    | "contacts"
+    | "customers"
     | "offers"
-    | "projects"
-    | "services";
+    | "jobs"
+    | "services"
+    | "scheduled_messages";
   initial?: Record<string, string>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabase: any;
@@ -20,25 +21,30 @@ const entityConfig = {
     createLink: "/dashboard/organizations/new",
     createButtonText: "Add Organization",
   },
-  contacts: {
-    title: "Contacts",
-    createLink: "/dashboard/contacts/new",
-    createButtonText: "Add Contact",
+  customers: {
+    title: "Customers",
+    createLink: "/dashboard/customers/new",
+    createButtonText: "Add Customer",
   },
   offers: {
     title: "Offers",
     createLink: "/dashboard/offers/new",
     createButtonText: "Add Offer",
   },
-  projects: {
-    title: "Projects",
-    createLink: "/dashboard/projects/new",
-    createButtonText: "Add Project",
+  jobs: {
+    title: "Jobs",
+    createLink: "/dashboard/jobs/new",
+    createButtonText: "Add Job",
   },
   services: {
     title: "Services",
     createLink: "/dashboard/services/new",
     createButtonText: "Add Service",
+  },
+  scheduled_messages: {
+    title: "Scheduled Messages",
+    createLink: "",
+    createButtonText: "",
   },
 };
 

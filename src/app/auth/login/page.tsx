@@ -129,9 +129,12 @@ function LoginContent() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <div className="w-full max-w-md p-8 space-y-8 bg-card minimal-shadow minimal-border rounded-[var(--radius)]">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-foreground">Sign in</h1>
-          <p className="mt-2 text-muted-foreground">to your account</p>
+        <div className="text-center space-y-2">
+          <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-teal-500 text-white shadow-lg shadow-teal-500/20 mb-4">
+             <span className="font-black text-xl tracking-tighter">ACS</span>
+          </div>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">ALEXANDER'S <span className="text-teal-600">CLEANING</span></h1>
+          <p className="text-slate-500 font-medium">Internal CRM Login</p>
         </div>
 
         {errorMessage && (

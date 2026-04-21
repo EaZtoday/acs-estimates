@@ -1,9 +1,9 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server';
-import { Contact } from '@/lib/api/contacts';
+import { Customer } from '@/lib/api/customers';
 import { Organization } from '@/lib/api/organizations';
 import { Service } from '@/lib/api/services';
 import { Offer } from '@/lib/api/offers';
-import { Project } from '@/lib/api/projects';
+import { Job } from '@/lib/api/jobs';
 import { unstable_cache } from 'next/cache';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type DbClient = any;
@@ -11,20 +11,20 @@ type DbClient = any;
 export interface EntityFilterOptions {
   currencies: Array<{ value: string; label: string }>;
   organizations: Array<{ value: string; label: string }>;
-  contacts: Array<{ value: string; label: string }>;
-  projects: Array<{ value: string; label: string }>;
+  customers: Array<{ value: string; label: string }>;
+  jobs: Array<{ value: string; label: string }>;
 }
 
 export interface DashboardStats {
-  organizations: number;
-  contacts: number;
-  projects: number;
-  offers: number;
+  customers: number;
+  jobs: number;
+  appointments: number;
+  messages: number;
 }
 
 export interface DashboardHomeData {
   stats: DashboardStats;
-  activeProjects: any[];
+  activeJobs: any[];
   offersForHistory: Array<{
     id: string;
     total_amount: number | null;
@@ -63,11 +63,11 @@ async function fetchFromTable<T>(
   return (data as T[]) || [];
 }
 
-// Contact data fetching with caching
-export const getContactsServer = unstable_cache(
-  async (supabase: DbClient, filters?: { organization_id?: string }): Promise<Contact[]> => {
+// Customer data fetching with caching
+export const getCustomersServer = unstable_cache(
+  async (supabase: DbClient, filters?: { organization_id?: string }): Promise<Customer[]> => {
     let query = supabase
-      .from('contacts')
+      .from('customers')
       .select(`
         *,
         organization:organizations(name, legal_name, country)
@@ -84,38 +84,38 @@ export const getContactsServer = unstable_cache(
     const { data, error } = await query;
 
     if (error) {
-      console.error('Error fetching contacts:', error);
-      throw new Error('Failed to fetch contacts');
+      console.error('Error fetching customers:', error);
+      throw new Error('Failed to fetch customers');
     }
 
-    return (data as Contact[]) || [];
+    return (data as Customer[]) || [];
   },
-  ['contacts'],
+  ['customers'],
   {
     revalidate: 60,
-    tags: ['contacts']
+    tags: ['customers']
   }
 );
 
-export const getContactServer = unstable_cache(
-  async (supabase: DbClient, id: string): Promise<Contact | null> => {
+export const getCustomerServer = unstable_cache(
+  async (supabase: DbClient, id: string): Promise<Customer | null> => {
     const { data, error } = await supabase
-      .from('contacts')
+      .from('customers')
       .select('*')
       .eq('id', id)
       .single();
 
     if (error) {
       if (error.code === 'PGRST116') return null;
-      throw new Error('Failed to fetch contact');
+      throw new Error('Failed to fetch customer');
     }
 
     return data;
   },
-  ['contact'],
+  ['customer'],
   {
     revalidate: 60,
-    tags: ['contacts']
+    tags: ['customers']
   }
 );
 
@@ -126,7 +126,7 @@ export const getOrganizationsServer = unstable_cache(
       .from('organizations')
       .select(`
         *,
-        contacts!inner(count)
+        customers!inner(count)
       `)
       .order('name');
 
@@ -135,12 +135,12 @@ export const getOrganizationsServer = unstable_cache(
       throw new Error('Failed to fetch organizations');
     }
 
-    const organizationsWithContactCounts = (organizations || []).map((org: any) => ({
+    const organizationsWithCustomerCounts = (organizations || []).map((org: any) => ({
       ...org,
-      contact_count: Array.isArray(org.contacts) ? org.contacts.length : 0
+      customer_count: Array.isArray(org.customers) ? org.customers.length : 0
     }));
 
-    return organizationsWithContactCounts;
+    return organizationsWithCustomerCounts;
   },
   ['organizations'],
   {
@@ -277,11 +277,11 @@ export const getOfferServer = unstable_cache(
   }
 );
 
-// Project data fetching with caching
-export const getProjectsServer = unstable_cache(
-  async (supabase: DbClient, filters?: { organization_id?: string }): Promise<Project[]> => {
+// Job data fetching with caching
+export const getJobsServer = unstable_cache(
+  async (supabase: DbClient, filters?: { organization_id?: string }): Promise<Job[]> => {
     let query = supabase
-      .from('projects')
+      .from('jobs')
       .select(`
         *,
         organization:organizations(name, legal_name, country)
@@ -298,38 +298,38 @@ export const getProjectsServer = unstable_cache(
     const { data, error } = await query;
 
     if (error) {
-      console.error('Error fetching projects:', error);
-      throw new Error('Failed to fetch projects');
+      console.error('Error fetching jobs:', error);
+      throw new Error('Failed to fetch jobs');
     }
 
-    return (data as Project[]) || [];
+    return (data as Job[]) || [];
   },
-  ['projects'],
+  ['jobs'],
   {
     revalidate: 60,
-    tags: ['projects']
+    tags: ['jobs']
   }
 );
 
-export const getProjectServer = unstable_cache(
-  async (supabase: DbClient, id: string): Promise<Project | null> => {
+export const getJobServer = unstable_cache(
+  async (supabase: DbClient, id: string): Promise<Job | null> => {
     const { data, error } = await supabase
-      .from('projects')
+      .from('jobs')
       .select('*')
       .eq('id', id)
       .single();
 
     if (error) {
       if (error.code === 'PGRST116') return null;
-      throw new Error('Failed to fetch project');
+      throw new Error('Failed to fetch job');
     }
 
     return data;
   },
-  ['project'],
+  ['job'],
   {
     revalidate: 60,
-    tags: ['projects']
+    tags: ['jobs']
   }
 );
 
@@ -338,17 +338,17 @@ export const getDashboardData = unstable_cache(
   async (supabase: DbClient) => {
     const [
       organizationsResult,
-      contactsResult,
+      customersResult,
       offersResult,
       servicesResult,
-      projectsResult,
+      jobsResult,
     ] = await Promise.all([
       supabase
         .from('organizations')
-        .select('*, contacts!inner(count)')
+        .select('*, customers!inner(count)')
         .order('name'),
       supabase
-        .from('contacts')
+        .from('customers')
         .select('*, organization:organizations(name, legal_name, country)'),
       supabase
         .from('offers')
@@ -358,19 +358,25 @@ export const getDashboardData = unstable_cache(
         .select('*')
         .order('name'),
       supabase
-        .from('projects')
-        .select('*, organization:organizations(name, legal_name, country)'),
+        .from('jobs')
+        .select('*, customer:customers(name)'),
+      supabase
+        .from('appointments')
+        .select('count', { count: 'exact', head: true }),
+      supabase
+        .from('scheduled_messages')
+        .select('count', { count: 'exact', head: true }),
     ]);
 
     if (organizationsResult.error) throw new Error('Failed to fetch organizations');
-    if (contactsResult.error) throw new Error('Failed to fetch contacts');
+    if (customersResult.error) throw new Error('Failed to fetch customers');
     if (offersResult.error) throw new Error('Failed to fetch offers');
     if (servicesResult.error) throw new Error('Failed to fetch services');
-    if (projectsResult.error) throw new Error('Failed to fetch projects');
+    if (jobsResult.error) throw new Error('Failed to fetch jobs');
 
     const organizations = (organizationsResult.data || []).map((org: any) => ({
       ...org,
-      contact_count: Array.isArray(org.contacts) ? org.contacts.length : 0
+      customer_count: Array.isArray(org.customers) ? org.customers.length : 0
     }));
 
     const offers = (offersResult.data || []).map((offer: any) => ({
@@ -379,17 +385,16 @@ export const getDashboardData = unstable_cache(
     }));
 
     return {
-      organizations,
-      contacts: contactsResult.data || [],
-      offers,
-      services: servicesResult.data || [],
-      projects: projectsResult.data || [],
+      customers: customersResult.data || [],
+      jobs: jobsResult.data || [],
+      appointments_count: (appointmentsResult as any).count || 0,
+      messages_count: (messagesResult as any).count || 0,
     };
   },
   ['dashboard-data'],
   {
     revalidate: 30,
-    tags: ['organizations', 'contacts', 'offers', 'services', 'projects']
+    tags: ['organizations', 'customers', 'offers', 'services', 'jobs']
   }
 );
 
@@ -402,7 +407,7 @@ export async function getEntityFilterOptions(
     { value: "GBP", label: "GBP (£)" },
   ];
 
-  const [currenciesResult, organizationsResult, contactsResult, projectsResult] =
+  const [currenciesResult, organizationsResult, customersResult, jobsResult] =
     await Promise.all([
       supabase
         .from("currencies")
@@ -412,9 +417,9 @@ export async function getEntityFilterOptions(
         .from("organizations")
         .select("id, name")
         .order("name", { ascending: true }),
-      supabase.from("contacts").select("id, name").order("name", { ascending: true }),
+      supabase.from("customers").select("id, name").order("name", { ascending: true }),
       supabase
-        .from("projects")
+        .from("jobs")
         .select("id, title")
         .order("title", { ascending: true }),
     ]);
@@ -436,19 +441,19 @@ export async function getEntityFilterOptions(
             value: String(org.id),
             label: String(org.name || "Unnamed Organization"),
           })),
-    contacts:
-      contactsResult.error || !Array.isArray(contactsResult.data)
+    customers:
+      customersResult.error || !Array.isArray(customersResult.data)
         ? []
-        : contactsResult.data.map((contact: any) => ({
-            value: String(contact.id),
-            label: String(contact.name || "Unnamed Contact"),
+        : customersResult.data.map((customer: any) => ({
+            value: String(customer.id),
+            label: String(customer.name || "Unnamed Customer"),
           })),
-    projects:
-      projectsResult.error || !Array.isArray(projectsResult.data)
+    jobs:
+      jobsResult.error || !Array.isArray(jobsResult.data)
         ? []
-        : projectsResult.data.map((project: any) => ({
-            value: String(project.id),
-            label: String(project.title || "Untitled Project"),
+        : jobsResult.data.map((job: any) => ({
+            value: String(job.id),
+            label: String(job.title || "Untitled Job"),
           })),
   };
 }
@@ -465,7 +470,7 @@ export async function getOrganizationsIndexCached(supabase: DbClient) {
       .select(
         `
         *,
-        contacts!inner(count)
+        customers!inner(count)
       `,
       )
       .order("name", { ascending: true });
@@ -476,13 +481,13 @@ export async function getOrganizationsIndexCached(supabase: DbClient) {
 
   return (organizations || []).map((org: any) => ({
     ...org,
-    contact_count: Array.isArray(org.contacts) ? org.contacts.length : 0,
+    customer_count: Array.isArray(org.customers) ? org.customers.length : 0,
   }));
 }
 
-export async function getContactsIndexCached(supabase: DbClient) {
-  const { data: contacts, error } = await supabase
-      .from("contacts")
+export async function getCustomersIndexCached(supabase: DbClient) {
+  const { data: customers, error } = await supabase
+      .from("customers")
       .select(
         `
         *,
@@ -492,15 +497,15 @@ export async function getContactsIndexCached(supabase: DbClient) {
       .order("name", { ascending: true });
 
   if (error) {
-    throw new Error("Failed to fetch contacts");
+    throw new Error("Failed to fetch customers");
   }
 
-  return contacts || [];
+  return customers || [];
 }
 
-export async function getProjectsIndexCached(supabase: DbClient) {
-  const { data: projects, error } = await supabase
-      .from("projects")
+export async function getJobsIndexCached(supabase: DbClient) {
+  const { data: jobs, error } = await supabase
+      .from("jobs")
       .select(
         `
         *,
@@ -510,10 +515,10 @@ export async function getProjectsIndexCached(supabase: DbClient) {
       .order("created_at", { ascending: false });
 
   if (error) {
-    throw new Error("Failed to fetch projects");
+    throw new Error("Failed to fetch jobs");
   }
 
-  return projects || [];
+  return jobs || [];
 }
 
 export async function getServicesIndexCached(supabase: DbClient) {
@@ -590,51 +595,62 @@ export async function getOffersIndexCached(supabase: DbClient) {
 export async function getDashboardHomeDataCached(
   supabase: DbClient,
 ): Promise<DashboardHomeData> {
-  const [orgs, contacts, projects, offers] = await Promise.all([
-      supabase.from("organizations").select("*", { count: "exact", head: true }),
-      supabase.from("contacts").select("*", { count: "exact", head: true }),
-      supabase.from("projects").select("*", { count: "exact", head: true }),
-      supabase.from("offers").select("*", { count: "exact", head: true }),
+  const [customers, jobs, appointments, messages] = await Promise.all([
+      supabase.from("customers").select("*", { count: "exact", head: true }),
+      supabase.from("jobs").select("*", { count: "exact", head: true }),
+      supabase.from("appointments").select("*", { count: "exact", head: true }),
+      supabase.from("scheduled_messages").select("*", { count: "exact", head: true }),
   ]);
 
-  const [
-    { data: activeProjects },
-    { data: offersForHistory },
-  ] = await Promise.all([
+  const [{ data: activeJobs }] = await Promise.all([
     supabase
-      .from("projects")
+      .from("jobs")
       .select(`
           *,
-          organization:organizations(id, name)
+          customer:customers(id, name)
         `)
-      .eq("status", "Active")
+      .eq("status", "job_scheduled")
       .order("created_at", { ascending: false }),
-    supabase
-      .from("offers")
-      .select("id, total_amount, is_accepted, created_at, valid_until, currency"),
   ]);
 
   return {
     stats: {
-      organizations: orgs.count ?? 0,
-      contacts: contacts.count ?? 0,
-      projects: projects.count ?? 0,
-      offers: offers.count ?? 0,
+      customers: customers.count ?? 0,
+      jobs: jobs.count ?? 0,
+      appointments: appointments.count ?? 0,
+      messages: messages.count ?? 0,
     },
-    activeProjects: activeProjects || [],
-    offersForHistory: (offersForHistory || []) as DashboardHomeData["offersForHistory"],
+    activeJobs: activeJobs || [],
+    offersForHistory: [], // Not used for now in this version
   };
+}
+
+export async function getScheduledMessagesIndexCached(supabase: DbClient) {
+  const { data, error } = await supabase
+      .from("scheduled_messages")
+      .select(`
+        *,
+        customer:customers(name)
+      `)
+      .order("scheduled_at", { ascending: true });
+
+  if (error) {
+    throw new Error("Failed to fetch scheduled messages");
+  }
+
+  return data || [];
 }
 
 // Cache tags for invalidation
 export const CACHE_TAGS = {
   ORGANIZATIONS: 'organizations',
-  CONTACTS: 'contacts',
+  CONTACTS: 'customers',
   OFFERS: 'offers',
-  PROJECTS: 'projects',
+  PROJECTS: 'jobs',
   SERVICES: 'services',
   DASHBOARD: 'dashboard',
-  SETTINGS: 'settings'
+  SETTINGS: 'settings',
+  MESSAGES: 'scheduled_messages'
 } as const;
 
 // Generic entity query functions
@@ -691,14 +707,14 @@ export async function getEntitiesWithRelations(
 
 // Predefined relation patterns for entities
 export const entityRelations = {
-  contacts: {
+  customers: {
     'organization:organizations(name)': true
   },
   organizations: {
-    'contacts!inner(count)': true
+    'customers!inner(count)': true
   },
-  projects: {
-    'organization:organizations(name, legal_name, country)': true,
+  jobs: {
+    'customer:customers(name, email, phone)': true,
   },
   offers: {
     'organization:organizations(name, legal_name, country)': true,
@@ -708,12 +724,12 @@ export const entityRelations = {
 };
 
 // Wrapper functions
-export async function getContactsServerWrapper(supabase: DbClient, filters?: { organization_id?: string }): Promise<Contact[]> {
-  return getContactsServer(supabase, filters);
+export async function getCustomersServerWrapper(supabase: DbClient, filters?: { organization_id?: string }): Promise<Customer[]> {
+  return getCustomersServer(supabase, filters);
 }
 
-export async function getContactServerWrapper(supabase: DbClient, id: string): Promise<Contact | null> {
-  return getContactServer(supabase, id);
+export async function getCustomerServerWrapper(supabase: DbClient, id: string): Promise<Customer | null> {
+  return getCustomerServer(supabase, id);
 }
 
 export async function getOrganizationsServerWrapper(supabase: DbClient): Promise<Organization[]> {
@@ -740,12 +756,12 @@ export async function getOfferServerWrapper(supabase: DbClient, id: string): Pro
   return getOfferServer(supabase, id);
 }
 
-export async function getProjectsServerWrapper(supabase: DbClient, filters?: { organization_id?: string }): Promise<Project[]> {
-  return getProjectsServer(supabase, filters);
+export async function getJobsServerWrapper(supabase: DbClient, filters?: { organization_id?: string }): Promise<Job[]> {
+  return getJobsServer(supabase, filters);
 }
 
-export async function getProjectServerWrapper(supabase: DbClient, id: string): Promise<Project | null> {
-  return getProjectServer(supabase, id);
+export async function getJobServerWrapper(supabase: DbClient, id: string): Promise<Job | null> {
+  return getJobServer(supabase, id);
 }
 
 export async function getDashboardDataWrapper(supabase: DbClient) {

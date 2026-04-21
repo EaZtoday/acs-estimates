@@ -2,19 +2,19 @@
 
 import { Badge } from "@/components/ui/primitives/badge";
 
-interface ContactCharacteristicsProps {
+interface CustomerCharacteristicsProps {
   characteristics: Record<string, boolean> | null;
   maxDisplay?: number;
   size?: "sm" | "md";
   showCount?: boolean;
 }
 
-export function ContactCharacteristics({
+export function CustomerCharacteristics({
   characteristics,
   maxDisplay = 2,
   size = "md",
   showCount = true,
-}: ContactCharacteristicsProps) {
+}: CustomerCharacteristicsProps) {
   const getDisplayName = (key: string): string => {
     return key.charAt(0).toUpperCase() + key.slice(1);
   };

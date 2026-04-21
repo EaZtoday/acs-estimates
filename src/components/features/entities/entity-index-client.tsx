@@ -26,13 +26,13 @@ import {
   getOfferDisplayLabel,
 } from "@/lib/utils";
 import { ProfileImage } from "@/components/ui/data-display/profile-image";
-import { ContactCharacteristics } from "@/components/ui/data-display/contact-characteristics";
+import { CustomerCharacteristics } from "@/components/ui/data-display/customer-characteristics";
 import { getCountryNameAndFlag } from "@/lib/countries";
 import { getIndustryName } from "@/lib/industries";
 import { Package } from "lucide-react";
 import {
-  getProjectFilters,
-  getContactFilters,
+  getJobFilters,
+  getCustomerFilters,
   getServiceFilters,
   STATUS_EXCLUDED_DELIMITER,
 } from "@/components/ui/composite/table-filters";
@@ -42,10 +42,10 @@ import {
 import { useRouter } from "next/navigation";
 import type { EntityFilterOptions } from "@/lib/server-data";
 // Import Server Actions for delete operations
-import { deleteContact } from "@/lib/actions/contacts";
+import { deleteCustomer } from "@/lib/actions/customers";
 import { deleteOrganization } from "@/lib/actions/organizations";
 import { deleteService } from "@/lib/actions/services";
-import { deleteProject } from "@/lib/actions/projects";
+import { deleteJob } from "@/lib/actions/jobs";
 import { deleteOffer } from "@/lib/actions/offers";
 import { getLucideIconComponent } from "@/components/ui/composite/lucide-icons";
 
@@ -134,10 +134,11 @@ function OfferActions({
 export interface EntityIndexClientProps<T extends BaseItem = BaseItem> {
   entity:
     | "organizations"
-    | "contacts"
-    | "projects"
+    | "customers"
+    | "jobs"
     | "services"
-    | "offers";
+    | "offers"
+    | "scheduled_messages";
   items: T[];
   initial?: Partial<Record<string, string>>;
   hideHeader?: boolean;
@@ -159,10 +160,10 @@ export default function EntityIndexClient<T extends BaseItem = BaseItem>({
       f_status,
       f_status_excluded,
       f_org,
-      f_contact,
+      f_customer,
       f_currency,
       f_country,
-      f_project,
+      f_job,
       f_type,
       f_group,
       f_public,
@@ -176,10 +177,10 @@ export default function EntityIndexClient<T extends BaseItem = BaseItem>({
       initial?.f_status_excluded || "",
     ),
     f_org: parseAsString.withDefault(initial?.f_org || ""),
-    f_contact: parseAsString.withDefault(initial?.f_contact || ""),
+    f_customer: parseAsString.withDefault(initial?.f_customer || ""),
     f_currency: parseAsString.withDefault(initial?.f_currency || ""),
     f_country: parseAsString.withDefault(initial?.f_country || ""),
-    f_project: parseAsString.withDefault(initial?.f_project || ""),
+    f_job: parseAsString.withDefault(initial?.f_job || ""),
     f_type: parseAsString.withDefault(initial?.f_type || ""),
     f_group: parseAsString.withDefault(initial?.f_group || ""),
     f_public: parseAsString.withDefault(initial?.f_public || ""),
@@ -198,10 +199,10 @@ export default function EntityIndexClient<T extends BaseItem = BaseItem>({
       });
     }
     if (f_org) filters.push({ key: "organization_id", value: f_org });
-    if (f_contact) filters.push({ key: "contact_id", value: f_contact });
+    if (f_customer) filters.push({ key: "customer_id", value: f_customer });
     if (f_currency) filters.push({ key: "currency", value: f_currency });
     if (f_country) filters.push({ key: "country", value: f_country });
-    if (f_project) filters.push({ key: "project_id", value: f_project });
+    if (f_job) filters.push({ key: "job_id", value: f_job });
     if (f_type) filters.push({ key: "type", value: f_type });
     if (f_group) filters.push({ key: "group", value: f_group });
     if (f_public) filters.push({ key: "public", value: f_public });
@@ -210,10 +211,10 @@ export default function EntityIndexClient<T extends BaseItem = BaseItem>({
     f_status,
     f_status_excluded,
     f_org,
-    f_contact,
+    f_customer,
     f_currency,
     f_country,
-    f_project,
+    f_job,
     f_type,
     f_group,
     f_public,
@@ -242,14 +243,14 @@ export default function EntityIndexClient<T extends BaseItem = BaseItem>({
   // Get the appropriate delete function based on entity type
   const getDeleteFunction = useCallback(() => {
     switch (entity) {
-      case "contacts":
-        return deleteContact;
+      case "customers":
+        return deleteCustomer;
       case "organizations":
         return deleteOrganization;
       case "services":
         return deleteService;
-      case "projects":
-        return deleteProject;
+      case "jobs":
+        return deleteJob;
       case "offers":
         return deleteOffer;
       default:
@@ -382,13 +383,13 @@ export default function EntityIndexClient<T extends BaseItem = BaseItem>({
             },
           },
           {
-            key: "contact_count",
-            header: "Contacts",
+            key: "customer_count",
+            header: "Customers",
             sortable: true,
             width: "100px",
             cell: (organization: any) => (
               <span className="text-sm font-medium text-[var(--foreground)]">
-                {Number(organization.contact_count || 0)}
+                {Number(organization.customer_count || 0)}
               </span>
             ),
           },
@@ -419,43 +420,30 @@ export default function EntityIndexClient<T extends BaseItem = BaseItem>({
         } as const;
       }
 
-      if (entity === "contacts") {
+      if (entity === "customers") {
         const columns: Column<any>[] = [
           {
             key: "name",
-            header: "Contact",
+            header: "Customer",
             sortable: true,
-            width: "300px",
+            width: "250px",
             cell: (c: any) => (
               <div className="flex items-center gap-3">
                 <ProfileImage
                   src={c.profile_image_url as string}
-                  alt={String(c.name)}
+                  alt={String(c.first_name || c.name)}
                   size="md"
-                  fallback={String(c.name)}
+                  fallback={String(c.first_name?.[0] || c.name?.[0] || "?")}
                 />
                 <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <Link
-                      href={`/dashboard/contacts/${c.id}`}
-                      className="text-sm font-semibold text-[var(--foreground)] hover:text-[var(--primary)]"
-                    >
-                      {String(c.name)}
-                    </Link>
-                    {c.linkedin_url && (
-                      <Link
-                        href={String(c.linkedin_url)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Linkedin className="h-4 w-4" />
-                      </Link>
-                    )}
-                  </div>
+                  <Link
+                    href={`/dashboard/customers/${c.id}`}
+                    className="text-sm font-semibold text-[var(--foreground)] hover:text-[var(--primary)]"
+                  >
+                    {c.first_name ? `${c.first_name} ${c.last_name || ""}` : String(c.name)}
+                  </Link>
                   {c.email && (
-                    <span className="text-sm text-[var(--muted-foreground)] truncate max-w-[200px]">
+                    <span className="text-xs text-[var(--muted-foreground)] truncate max-w-[200px]">
                       {String(c.email)}
                     </span>
                   )}
@@ -464,171 +452,141 @@ export default function EntityIndexClient<T extends BaseItem = BaseItem>({
             ),
           },
           {
-            key: "organization",
-            header: "Organization",
-            sortable: true,
-            width: "200px",
-            cell: (c: any) => {
-              if (!c.organization_id)
-                return <span className="text-muted-foreground">-</span>;
-              const displayName =
-                c.organization?.name || `Organization ID: ${c.organization_id}`;
-              const flag = c.organization?.country
-                ? getCountryNameAndFlag(String(c.organization.country)).flag
-                : null;
-              return (
-                <Link
-                  href={`/dashboard/organizations/${c.organization_id}`}
-                  className="text-sm text-foreground hover:text-primary inline-flex items-center gap-2"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {flag && <span>{flag}</span>}
-                  <span className="truncate">{displayName}</span>
-                </Link>
-              );
-            },
-          },
-          {
-            key: "country",
-            header: "Country",
+            key: "phone",
+            header: "Phone",
             sortable: true,
             width: "150px",
-            cell: (c: any) => {
-              if (!c.country)
-                return (
-                  <span className="text-[var(--muted-foreground)]">-</span>
-                );
-              const { name, flag } = getCountryNameAndFlag(String(c.country));
-              return (
-                <span className="text-sm text-[var(--foreground)] flex items-center gap-2">
-                  <span>{flag}</span>
-                  <span>{name}</span>
-                </span>
-              );
-            },
+            cell: (c: any) => (
+              <span className="text-sm text-[var(--foreground)]">
+                {String(c.phone || "-")}
+              </span>
+            ),
           },
           {
-            key: "characteristics",
-            header: "Characteristics",
-            sortable: false,
-            width: "200px",
+            key: "address",
+            header: "Address",
+            sortable: true,
+            width: "250px",
             cell: (c: any) => (
-              <ContactCharacteristics
-                characteristics={c.characteristics}
-                maxDisplay={2}
-                size="sm"
-                showCount={true}
-              />
+              <span className="text-sm text-[var(--foreground)] truncate">
+                {c.address_line_1 ? `${c.address_line_1}, ${c.city || ""}` : "-"}
+              </span>
+            ),
+          },
+          {
+            key: "created_at",
+            header: "Created",
+            sortable: true,
+            width: "120px",
+            cell: (c: any) => (
+              <span className="text-sm text-[var(--muted-foreground)]">
+                {c.created_at ? formatDate(String(c.created_at)) : "-"}
+              </span>
             ),
           },
         ];
         return {
           columns,
           searchFields: [
-            "name",
+            "first_name",
+            "last_name",
             "email",
-            "company_role",
-            "country",
-            "characteristics",
+            "phone",
+            "address_line_1",
+            "city",
           ],
-          createLink: "/dashboard/contacts/new",
-          createButtonText: "Add Contact",
+          createLink: "/dashboard/customers/new",
+          createButtonText: "Add Customer",
           empty: {
-            icon: <Building2 />,
-            title: "No contacts",
-            desc: "Get started by creating a new contact.",
+            icon: <UsersIcon />,
+            title: "No customers",
+            desc: "Get started by adding your first customer.",
           },
         } as const;
       }
 
-      if (entity === "projects") {
+      if (entity === "jobs") {
         const columns: Column<any>[] = [
           {
-            key: "title",
-            header: "Project",
+            key: "type",
+            header: "Type",
             sortable: true,
-            width: "280px",
+            width: "100px",
+            cell: (p: any) => (
+              <Badge variant={p.type === 'estimate' ? 'outline' : 'default'} className="capitalize">
+                {String(p.type)}
+              </Badge>
+            ),
+          },
+          {
+            key: "customer",
+            header: "Customer",
+            sortable: true,
+            width: "200px",
             cell: (p: any) => (
               <Link
-                href={`/dashboard/projects/${p.id}`}
+                href={`/dashboard/customers/${p.customer_id}`}
                 className="text-sm font-semibold text-[var(--foreground)] hover:text-[var(--primary)]"
               >
-                {String(p.title)}
+                {p.customer?.name || "View Customer"}
               </Link>
             ),
           },
           {
-            key: "organization",
-            header: "Organization",
+            key: "service_type",
+            header: "Service",
             sortable: true,
-            width: "220px",
-            cell: (p: any) =>
-              p.organization?.name ? (
-                <Link
-                  href={`/dashboard/organizations/${p.organization_id}`}
-                  className="text-sm text-foreground hover:text-primary inline-flex items-center gap-2"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {p.organization?.country && (
-                    <span>
-                      {
-                        getCountryNameAndFlag(String(p.organization.country))
-                          .flag
-                      }
-                    </span>
-                  )}
-                  <span className="truncate">
-                    {String(p.organization.name)}
-                  </span>
-                </Link>
-              ) : (
-                <span className="text-muted-foreground">-</span>
-              ),
+            width: "180px",
+            cell: (p: any) => (
+              <span className="text-sm text-[var(--foreground)]">
+                {String(p.service_type || "-")}
+              </span>
+            ),
+          },
+          {
+            key: "price_estimate",
+            header: "Price",
+            sortable: true,
+            width: "100px",
+            cell: (p: any) => (
+              <span className="text-sm font-bold text-teal-600">
+                ${Number(p.price_estimate || 0)}
+              </span>
+            ),
           },
           {
             key: "status",
             header: "Status",
             sortable: true,
-            width: "140px",
+            width: "160px",
             cell: (p: any) => (
               <StatusPill
                 value={String(p.status || "")}
-                type="project-status"
+                type="job-status"
               />
             ),
           },
           {
-            key: "start_date",
-            header: "Start Date",
+            key: "created_at",
+            header: "Created",
             sortable: true,
             width: "120px",
             cell: (p: any) => (
-              <span className="text-sm text-[var(--foreground)]">
-                {p.start_date ? formatDate(String(p.start_date)) : "-"}
-              </span>
-            ),
-          },
-          {
-            key: "end_date",
-            header: "End Date",
-            sortable: true,
-            width: "120px",
-            cell: (p: any) => (
-              <span className="text-sm text-[var(--foreground)]">
-                {p.end_date ? formatDate(String(p.end_date)) : "-"}
+              <span className="text-sm text-[var(--muted-foreground)]">
+                {p.created_at ? formatDate(String(p.created_at)) : "-"}
               </span>
             ),
           },
         ];
         return {
           columns,
-          searchFields: ["title", "status"],
-          createLink: "/dashboard/projects/new",
-          createButtonText: "Add Project",
+          searchFields: ["service_type", "status"],
+          createLink: "/dashboard/jobs/new",
+          createButtonText: "Add Job",
           empty: {
             icon: <FileText />,
-            title: "No projects",
-            desc: "Get started by creating a new project.",
+            title: "No Jobs or Estimates",
+            desc: "Create an estimate to get started.",
           },
         } as const;
       }
@@ -727,6 +685,68 @@ export default function EntityIndexClient<T extends BaseItem = BaseItem>({
             icon: <Package />,
             title: "No services",
             desc: "Get started by creating a new service.",
+          },
+        } as const;
+      }
+
+
+
+      if (entity === "scheduled_messages") {
+        const columns: Column<any>[] = [
+          {
+            key: "customer",
+            header: "Recipient",
+            sortable: true,
+            width: "200px",
+            cell: (m: any) => (
+              <span className="text-sm font-semibold text-slate-900">
+                {m.customer?.name || "Unknown"}
+              </span>
+            ),
+          },
+          {
+            key: "content",
+            header: "Message Content",
+            sortable: false,
+            width: "400px",
+            cell: (m: any) => (
+              <span className="text-sm text-slate-600 line-clamp-1">
+                {String(m.content)}
+              </span>
+            ),
+          },
+          {
+            key: "scheduled_at",
+            header: "Scheduled For",
+            sortable: true,
+            width: "180px",
+            cell: (m: any) => (
+              <span className="text-sm text-slate-900 font-medium">
+                {m.scheduled_at ? formatDate(String(m.scheduled_at)) : "-"}
+              </span>
+            ),
+          },
+          {
+            key: "status",
+            header: "Status",
+            sortable: true,
+            width: "120px",
+            cell: (m: any) => (
+              <Badge variant={m.status === 'sent' ? 'default' : 'outline'}>
+                {String(m.status)}
+              </Badge>
+            ),
+          },
+        ];
+        return {
+          columns,
+          searchFields: ["content", "status"],
+          createLink: "",
+          createButtonText: "",
+          empty: {
+            icon: <MessageSquare />,
+            title: "No scheduled messages",
+            desc: "Messages will be automatically scheduled when jobs are booked.",
           },
         } as const;
       }
@@ -883,10 +903,10 @@ export default function EntityIndexClient<T extends BaseItem = BaseItem>({
   const filters = useMemo(() => {
     if (entity === "organizations")
       return getOrganizationFilters();
-    if (entity === "projects")
-      return getProjectFilters({ organizations: filterOptions.organizations });
-    if (entity === "contacts")
-      return getContactFilters({ organizations: filterOptions.organizations });
+    if (entity === "jobs")
+      return getJobFilters({ organizations: filterOptions.organizations });
+    if (entity === "customers")
+      return getCustomerFilters({ organizations: filterOptions.organizations });
     if (entity === "services") return getServiceFilters();
     return [];
   }, [entity, filterOptions]);
@@ -911,12 +931,12 @@ export default function EntityIndexClient<T extends BaseItem = BaseItem>({
           searchPlaceholder={
             entity === "organizations"
               ? "Search organizations..."
-              : entity === "projects"
-                ? "Search projects..."
+              : entity === "jobs"
+                ? "Search jobs..."
                 : entity === "services"
                   ? "Search services..."
-                  : entity === "contacts"
-                    ? "Search contacts..."
+                  : entity === "customers"
+                    ? "Search customers..."
                     : entity === "offers"
                       ? "Search offers..."
                       : "Search..."
@@ -930,12 +950,12 @@ export default function EntityIndexClient<T extends BaseItem = BaseItem>({
           filterType={
             entity === "organizations"
               ? "organization"
-              : entity === "contacts"
-                ? "contact"
+              : entity === "customers"
+                ? "customer"
                 : entity === "offers"
                   ? "offer"
-                  : entity === "projects"
-                    ? "project"
+                  : entity === "jobs"
+                    ? "job"
                     : entity === "services"
                       ? "service"
                       : "generic"

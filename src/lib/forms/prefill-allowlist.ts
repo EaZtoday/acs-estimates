@@ -1,8 +1,8 @@
 export type PrefillEntity =
   | "organization"
-  | "contact"
+  | "customer"
   | "service"
-  | "project"
+  | "job"
   | "offer";
 
 // Allowlist of URL params that are permitted to prefill forms per entity.
@@ -11,9 +11,9 @@ export const PREFILL_KEYS_BY_ENTITY: Record<PrefillEntity, string[]> = {
   organization: [
     // none for now
   ],
-  contact: ["name", "email", "organization_id", "country", "linkedin_url"],
+  customer: ["name", "email", "organization_id", "country", "linkedin_url"],
   service: ["name", "group_type", "price", "is_recurring"],
-  project: [
+  job: [
     "title",
     "organization_id",
     "status",

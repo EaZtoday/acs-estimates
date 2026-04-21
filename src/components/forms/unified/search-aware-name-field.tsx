@@ -11,7 +11,7 @@ interface SearchAwareNameFieldProps {
   form: UseFormReturn<Record<string, unknown>>;
   fieldName: string;
   placeholder: string;
-  entityType: "contact" | "organization";
+  entityType: "customer" | "organization";
   disabled?: boolean;
   mode?: "create" | "edit";
 }
@@ -50,14 +50,14 @@ export default function SearchAwareNameField({
       setIsSearching(true);
       try {
         const endpoint =
-          entityType === "contact" ? "/api/contacts" : "/api/organizations";
+          entityType === "customer" ? "/api/customers" : "/api/organizations";
         const results = await fetcher(endpoint);
 
         // Filter results that match the current input
         const matches = (results as SearchResult[]).filter(
           (item) =>
             item.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-            (entityType === "contact" &&
+            (entityType === "customer" &&
               item.email?.toLowerCase().includes(searchValue.toLowerCase()))
         );
 
@@ -110,14 +110,14 @@ export default function SearchAwareNameField({
         <AlertDescription className="text-muted-foreground">
           <div className="font-medium mb-1">
             Found {searchResults.length} existing{" "}
-            {entityType === "contact" ? "contact(s)" : "organization(s)"} with
+            {entityType === "customer" ? "customer(s)" : "organization(s)"} with
             similar names:
           </div>
           <div className="space-y-1 text-sm">
             {searchResults.slice(0, 3).map((result) => (
               <div key={result.id} className="flex items-center gap-2">
                 <span className="font-medium">{result.name}</span>
-                {entityType === "contact" && result.email && (
+                {entityType === "customer" && result.email && (
                   <span className="text-muted-foreground">
                     ({result.email})
                   </span>

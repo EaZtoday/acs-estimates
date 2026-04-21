@@ -21,7 +21,7 @@ export interface Organization {
   logo_image_url?: string;
   profile_image_url?: string;
   is_agency?: boolean;
-  contact_count?: number;
+  customer_count?: number;
   [key: string]: unknown;
 }
 
@@ -65,12 +65,12 @@ class OrganizationService extends ApiService<Organization> {
 
         let userMessage = "Cannot delete this organization because it has related data.";
 
-        if (tableName === "contacts") {
-          userMessage = "Cannot delete this organization because it has associated contacts. Please reassign or remove the contacts first.";
+        if (tableName === "customers") {
+          userMessage = "Cannot delete this organization because it has associated customers. Please reassign or remove the customers first.";
         } else if (tableName === "offers") {
           userMessage = "Cannot delete this organization because it has associated offers. Please remove the offers first.";
-        } else if (tableName === "projects") {
-          userMessage = "Cannot delete this organization because it has associated projects. Please remove the projects first.";
+        } else if (tableName === "jobs") {
+          userMessage = "Cannot delete this organization because it has associated jobs. Please remove the jobs first.";
         }
 
         const userError = new Error(userMessage);

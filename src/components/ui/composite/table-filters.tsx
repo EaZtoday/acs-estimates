@@ -314,7 +314,7 @@ export const getOrganizationFilters = (): FilterOption[] => [
 /** Delimiter for encoding excluded statuses in URL (e.g. f_status_excluded=Closed Lost|Rapport) */
 export const STATUS_EXCLUDED_DELIMITER = "|";
 
-export const getContactFilters = (dynamicOptions?: {
+export const getCustomerFilters = (dynamicOptions?: {
   organizations?: Array<{ value: string; label: string }>;
 }): FilterOption[] => [
   {
@@ -399,7 +399,7 @@ export const getOfferFilters = (dynamicOptions?: {
   },
 ];
 
-export const getProjectFilters = (dynamicOptions?: {
+export const getJobFilters = (dynamicOptions?: {
   organizations?: Array<{ value: string; label: string }>;
 }): FilterOption[] => [
   {

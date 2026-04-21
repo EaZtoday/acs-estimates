@@ -2,7 +2,7 @@
 // This file contains all the status options, priorities, and other filter data
 // that can be dynamically updated and shared across the application
 
-// Project status options
+// Job status options
 export const PROJECT_STATUS_OPTIONS = [
   { value: "Active", label: "Active" },
   { value: "Paused", label: "Paused" },
@@ -24,6 +24,6 @@ export const SERVICE_GROUP_OPTIONS = [
 ];
 
 // Type definitions for better type safety
-export type ProjectStatus = (typeof PROJECT_STATUS_OPTIONS)[number]["value"];
+export type JobStatus = (typeof PROJECT_STATUS_OPTIONS)[number]["value"];
 export type OfferStatus = (typeof OFFER_STATUS_OPTIONS)[number]["value"];
 export type ServiceGroup = (typeof SERVICE_GROUP_OPTIONS)[number]["value"];

@@ -30,9 +30,9 @@ import { ConfirmDialog } from "@/components/ui/navigation";
 import {
   applyFilters,
   applyOrganizationFilters,
-  applyContactFilters,
+  applyCustomerFilters,
   applyOfferFilters,
-  applyProjectFilters,
+  applyJobFilters,
   applyServiceFilters,
 } from "@/lib/utils/filter-utils";
 
@@ -108,9 +108,9 @@ export interface DataTableProps<T> {
     | "generic"
     | "organization"
     | "lead"
-    | "contact"
+    | "customer"
     | "offer"
-    | "project"
+    | "job"
     | "task"
     | "interaction"
     | "service"
@@ -205,14 +205,14 @@ export default function DataTable<
         case "organization":
           filtered = applyOrganizationFilters(filtered, effectiveFilters);
           break;
-        case "contact":
-          filtered = applyContactFilters(filtered, effectiveFilters);
+        case "customer":
+          filtered = applyCustomerFilters(filtered, effectiveFilters);
           break;
         case "offer":
           filtered = applyOfferFilters(filtered, effectiveFilters);
           break;
-        case "project":
-          filtered = applyProjectFilters(filtered, effectiveFilters);
+        case "job":
+          filtered = applyJobFilters(filtered, effectiveFilters);
           break;
         case "service":
           filtered = applyServiceFilters(filtered, effectiveFilters);

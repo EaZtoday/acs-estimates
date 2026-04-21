@@ -14,8 +14,8 @@ interface ContentItem {
 
 interface CommandPaletteSearchResponse {
   organizations: ContentItem[];
-  contacts: ContentItem[];
-  projects: ContentItem[];
+  customers: ContentItem[];
+  jobs: ContentItem[];
   offers: ContentItem[];
   services: ContentItem[];
 }
@@ -44,8 +44,8 @@ export async function GET(request: NextRequest) {
     if (q.length < 2) {
       const empty: CommandPaletteSearchResponse = {
         organizations: [],
-        contacts: [],
-        projects: [],
+        customers: [],
+        jobs: [],
         offers: [],
         services: [],
       };
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
     }
 
     const pattern = `%${q}%`;
-    const [organizationsResult, contactsResult, projectsResult, offersResult, servicesResult] =
+    const [organizationsResult, customersResult, jobsResult, offersResult, servicesResult] =
       await Promise.all([
         supabase
           .from("organizations")
@@ -62,13 +62,13 @@ export async function GET(request: NextRequest) {
           .order("name", { ascending: true })
           .limit(limit),
         supabase
-          .from("contacts")
+          .from("customers")
           .select("id, name, email, company_role, profile_image_url")
           .ilike("name", pattern)
           .order("name", { ascending: true })
           .limit(limit),
         supabase
-          .from("projects")
+          .from("jobs")
           .select("id, title, status")
           .ilike("title", pattern)
           .order("title", { ascending: true })
@@ -99,26 +99,26 @@ export async function GET(request: NextRequest) {
               imageUrl: org.profile_image_url || undefined,
               fallback: String(org.name || org.legal_name || "?"),
             })),
-      contacts:
-        contactsResult.error || !Array.isArray(contactsResult.data)
+      customers:
+        customersResult.error || !Array.isArray(customersResult.data)
           ? []
-          : contactsResult.data.map((contact: any) => ({
-              id: String(contact.id),
-              name: String(contact.name || "Unnamed Contact"),
-              href: `/dashboard/contacts/${contact.id}`,
-              description: contact.email || contact.company_role || undefined,
-              imageUrl: contact.profile_image_url || undefined,
-              fallback: String(contact.name || "?"),
+          : customersResult.data.map((customer: any) => ({
+              id: String(customer.id),
+              name: String(customer.name || "Unnamed Customer"),
+              href: `/dashboard/customers/${customer.id}`,
+              description: customer.email || customer.company_role || undefined,
+              imageUrl: customer.profile_image_url || undefined,
+              fallback: String(customer.name || "?"),
             })),
-      projects:
-        projectsResult.error || !Array.isArray(projectsResult.data)
+      jobs:
+        jobsResult.error || !Array.isArray(jobsResult.data)
           ? []
-          : projectsResult.data.map((project: any) => ({
-              id: String(project.id),
-              name: String(project.title || "Untitled Project"),
-              href: `/dashboard/projects/${project.id}`,
-              description: project.status || undefined,
-              status: project.status || undefined,
+          : jobsResult.data.map((job: any) => ({
+              id: String(job.id),
+              name: String(job.title || "Untitled Job"),
+              href: `/dashboard/jobs/${job.id}`,
+              description: job.status || undefined,
+              status: job.status || undefined,
             })),
       offers:
         offersResult.error || !Array.isArray(offersResult.data)

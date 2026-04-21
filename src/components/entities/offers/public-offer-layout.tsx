@@ -147,7 +147,7 @@ export default function PublicOfferLayout({
   const corp = Array.isArray(displayOffer.corporate_entity)
     ? (displayOffer.corporate_entity as any[])[0]
     : (displayOffer.corporate_entity as any) || null;
-  const contact = (displayOffer as any).receiving_contact as
+  const customer = (displayOffer as any).receiving_customer as
     | { name?: string; email?: string; company_role?: string }
     | undefined;
 
@@ -522,27 +522,27 @@ export default function PublicOfferLayout({
                           )}
                         </div>
                       </div>
-                      {contact && (contact.name || contact.email) && (
+                      {customer && (customer.name || customer.email) && (
                         <div>
                           <h3 className="text-sm font-medium text-muted-foreground mb-2">
                             Recipient
                           </h3>
                           <div className="space-y-1">
-                            {contact.name && (
+                            {customer.name && (
                               <p>
                                 <span className="font-medium">
-                                  {contact.name}
+                                  {customer.name}
                                 </span>
                               </p>
                             )}
-                            {contact.company_role && (
+                            {customer.company_role && (
                               <p className="text-muted-foreground">
-                                {contact.company_role}
+                                {customer.company_role}
                               </p>
                             )}
-                            {contact.email && (
+                            {customer.email && (
                               <p className="text-muted-foreground">
-                                {contact.email}
+                                {customer.email}
                               </p>
                             )}
                           </div>
@@ -858,7 +858,7 @@ export default function PublicOfferLayout({
                             offerId={displayOffer.id}
                             mode="public-view"
                             accessEmail={
-                              ((displayOffer as any).receiving_contact
+                              ((displayOffer as any).receiving_customer
                                 ?.email as string) || undefined
                             }
                           />
@@ -914,12 +914,12 @@ export default function PublicOfferLayout({
 
               <footer className="mt-8 pt-6 border-t text-sm text-muted-foreground text-center">
                 <Link
-                  href={"mailto:contact@envisioning.com"}
+                  href={"mailto:customer@envisioning.com"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-neutral-500 hover:underline"
                 >
-                  contact@envisioning.com
+                  customer@envisioning.com
                 </Link>
               </footer>
             </>

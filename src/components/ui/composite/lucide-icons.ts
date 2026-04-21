@@ -74,7 +74,7 @@ export const LUCIDE_ICON_OPTIONS: LucideIconOption[] = [
   { name: "Plus", Icon: Plus, keywords: ["add", "create"] },
   { name: "Minus", Icon: Minus, keywords: ["remove", "subtract"] },
   { name: "Mail", Icon: Mail, keywords: ["email", "message"] },
-  { name: "Phone", Icon: Phone, keywords: ["call", "contact"] },
+  { name: "Phone", Icon: Phone, keywords: ["call", "customer"] },
   { name: "MapPin", Icon: MapPin, keywords: ["location", "address"] },
   { name: "Users", Icon: Users, keywords: ["people", "team"] },
   { name: "User", Icon: User, keywords: ["person", "profile"] },

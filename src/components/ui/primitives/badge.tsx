@@ -24,7 +24,7 @@ const badgeVariants = cva(
           "border-transparent bg-neutral-400 text-neutral-900 dark:bg-neutral-700 dark:text-neutral-100",
         // sent: gray pill
         sent: "border-transparent bg-neutral-200 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200",
-        // Project status variants
+        // Job status variants
         planning:
           "border-transparent bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
         "in-progress":
@@ -86,6 +86,12 @@ const badgeVariants = cva(
           "border-transparent bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
         "token-expired":
           "border-transparent bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
+        // Window Cleaning specific
+        "estimate-requested": "border-transparent bg-slate-100 text-slate-800",
+        "estimate-scheduled": "border-transparent bg-blue-100 text-blue-800",
+        "estimate-sent": "border-transparent bg-indigo-100 text-indigo-800",
+        "job-scheduled": "border-transparent bg-teal-100 text-teal-800",
+        "job-completed": "border-transparent bg-green-100 text-green-800",
       },
     },
     defaultVariants: {

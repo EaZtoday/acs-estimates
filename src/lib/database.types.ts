@@ -40,7 +40,7 @@ export interface Database {
         }
         Update: Partial<Database['public']['Tables']['organizations']['Insert']>
       }
-      contacts: {
+      customers: {
         Row: {
           id: string
           created_at: string
@@ -56,14 +56,14 @@ export interface Database {
           corporate_email: string | null
           profile_image_url: string | null
         }
-        Insert: Omit<Database['public']['Tables']['contacts']['Row'], 'id' | 'created_at' | 'updated_at'> & {
+        Insert: Omit<Database['public']['Tables']['customers']['Row'], 'id' | 'created_at' | 'updated_at'> & {
           id?: string
           created_at?: string
           updated_at?: string
         }
-        Update: Partial<Database['public']['Tables']['contacts']['Insert']>
+        Update: Partial<Database['public']['Tables']['customers']['Insert']>
       }
-      projects: {
+      jobs: {
         Row: {
           id: string
           created_at: string
@@ -76,12 +76,12 @@ export interface Database {
           end_date: string | null
           status: string
         }
-        Insert: Omit<Database['public']['Tables']['projects']['Row'], 'id' | 'created_at' | 'updated_at'> & {
+        Insert: Omit<Database['public']['Tables']['jobs']['Row'], 'id' | 'created_at' | 'updated_at'> & {
           id?: string
           created_at?: string
           updated_at?: string
         }
-        Update: Partial<Database['public']['Tables']['projects']['Insert']>
+        Update: Partial<Database['public']['Tables']['jobs']['Insert']>
       }
       services: {
         Row: {
@@ -189,7 +189,7 @@ export interface Database {
           updated_at: string
           title: string | null
           organization_id: string | null
-          contact_id: string | null
+          customer_id: string | null
           corporate_entity_id: string | null
           valid_until: string | null
           status: string
@@ -219,7 +219,7 @@ export interface Database {
           agreement_notice_email: string | null
           agreement_include_annex: boolean
           agreement_terms_override: string | null
-          billing_contact_email: string | null
+          billing_customer_email: string | null
           billing_po_number: string | null
           billing_vat_id: string | null
           service_inputs: Json | null

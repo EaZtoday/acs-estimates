@@ -7,8 +7,8 @@ import { getEntityFilterOptionsCached } from "@/lib/server-data";
 
 type EntityType =
   | "organizations"
-  | "contacts"
-  | "projects"
+  | "customers"
+  | "jobs"
   | "services"
   | "offers";
 
@@ -30,10 +30,10 @@ export default async function EntityIndexPage({
     view: parseAsString.withDefault(""),
     f_status: parseAsString.withDefault(""),
     f_org: parseAsString.withDefault(""),
-    f_contact: parseAsString.withDefault(""),
+    f_customer: parseAsString.withDefault(""),
     f_currency: parseAsString.withDefault(""),
     f_country: parseAsString.withDefault(""),
-    f_project: parseAsString.withDefault(""),
+    f_job: parseAsString.withDefault(""),
     f_is_overdue: parseAsString.withDefault(""),
     f_type: parseAsString.withDefault(""),
     f_group: parseAsString.withDefault(""),
@@ -71,7 +71,7 @@ async function EntityIndexContent({
       .select(
         `
         *,
-        contacts!inner(count)
+        customers!inner(count)
       `
       )
       .order("name", { ascending: true });
@@ -84,9 +84,9 @@ async function EntityIndexContent({
       />
     );
   }
-  if (entity === "contacts") {
-    const { data: contacts } = await supabase
-      .from("contacts")
+  if (entity === "customers") {
+    const { data: customers } = await supabase
+      .from("customers")
       .select(
         `
         *,
@@ -97,15 +97,15 @@ async function EntityIndexContent({
     return (
       <EntityIndexClient
         entity={entity}
-        items={contacts || []}
+        items={customers || []}
         initial={initial}
         filterOptions={filterOptions}
       />
     );
   }
-  if (entity === "projects") {
-    const { data: projects } = await supabase
-      .from("projects")
+  if (entity === "jobs") {
+    const { data: jobs } = await supabase
+      .from("jobs")
       .select(
         `
         *,
@@ -116,7 +116,7 @@ async function EntityIndexContent({
     return (
       <EntityIndexClient
         entity={entity}
-        items={projects || []}
+        items={jobs || []}
         initial={initial}
         filterOptions={filterOptions}
       />

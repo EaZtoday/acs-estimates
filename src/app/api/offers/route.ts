@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    if (body?.offer?.contact_id) delete body.offer.contact_id;
+    if (body?.offer?.customer_id) delete body.offer.customer_id;
 
     // Extract helper-only field for selected links
     let linkIds: string[] | null = null;

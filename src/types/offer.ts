@@ -23,7 +23,7 @@ export interface Offer {
   valid_until?: string;
   created_at?: string;
   updated_at?: string;
-  contact_id?: string;
+  customer_id?: string;
   global_discount_percentage?: number;
   discount_reason?: string | null;
   is_accepted?: boolean;

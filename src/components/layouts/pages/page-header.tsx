@@ -186,7 +186,7 @@ function formatSegment(segment: string): string {
     users: "Users",
     services: "Services",
     settings: "Settings",
-    projects: "Projects",
+    jobs: "Jobs",
     offers: "Offers",
   };
 

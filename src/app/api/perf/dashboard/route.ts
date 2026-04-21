@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 import {
-  getContactsIndexCached,
+  getCustomersIndexCached,
   getDashboardHomeDataCached,
   getEntityFilterOptionsCached,
   getOffersIndexCached,
   getOrganizationsIndexCached,
-  getProjectsIndexCached,
+  getJobsIndexCached,
   getServicesIndexCached,
 } from "@/lib/server-data";
 
@@ -56,8 +56,8 @@ export async function GET(request: NextRequest) {
       const metrics = await Promise.all([
         measure("dashboard_home", () => getDashboardHomeDataCached(supabase)),
         measure("organizations_index", () => getOrganizationsIndexCached(supabase)),
-        measure("contacts_index", () => getContactsIndexCached(supabase)),
-        measure("projects_index", () => getProjectsIndexCached(supabase)),
+        measure("customers_index", () => getCustomersIndexCached(supabase)),
+        measure("jobs_index", () => getJobsIndexCached(supabase)),
         measure("offers_index", () => getOffersIndexCached(supabase)),
         measure("services_index", () => getServicesIndexCached(supabase)),
         measure("entity_filter_options", () => getEntityFilterOptionsCached(supabase)),

@@ -6,8 +6,8 @@ import { createServerSupabaseClient } from "@/lib/supabase-server";
 
 type EntityType =
   | "organizations"
-  | "contacts"
-  | "projects"
+  | "customers"
+  | "jobs"
   | "services"
   | "offers";
 
@@ -28,19 +28,19 @@ export default async function EntityEditPage({
 
   const titleMap: Record<EntityType, string> = {
     organizations: "Organization Details",
-    contacts: "Contact Details",
-    projects: "Project Details",
+    customers: "Customer Details",
+    jobs: "Job Details",
     services: "Service Details",
     offers: "Offer Details",
   };
 
   const entityTypeMap: Record<
     EntityType,
-    "organization" | "contact" | "project" | "service" | "offer"
+    "organization" | "customer" | "job" | "service" | "offer"
   > = {
     organizations: "organization",
-    contacts: "contact",
-    projects: "project",
+    customers: "customer",
+    jobs: "job",
     services: "service",
     offers: "offer",
   };

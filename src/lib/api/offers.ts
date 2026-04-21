@@ -7,7 +7,7 @@ export interface Offer {
   updated_at: string;
   title?: string;
   organization_id?: string;
-  contact_id?: string;
+  customer_id?: string;
   corporate_entity_id?: string;
   valid_until?: string;
   status: 'draft' | 'sent';

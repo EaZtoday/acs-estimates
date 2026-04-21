@@ -95,10 +95,17 @@ const serviceCategorySchema = z
 		return value;
 	});
 
-// Contact schemas
-export const contactCreateSchema = z.object({
+// Customer schemas
+export const customerCreateSchema = z.object({
 	email: optionalEmailSchema,
 	name: nameSchema.optional(),
+	first_name: z.string().optional().nullable(),
+	last_name: z.string().optional().nullable(),
+	phone: z.string().optional().nullable(),
+	address_line_1: z.string().optional().nullable(),
+	city: z.string().optional().nullable(),
+	state: z.string().optional().nullable(),
+	zip: z.string().optional().nullable(),
 	organization_id: optionalUuidSchema,
 	linkedin_url: optionalUrlSchema,
 	company_role: z
@@ -125,7 +132,7 @@ export const contactCreateSchema = z.object({
 	profile_image_url: optionalUrlSchema,
 });
 
-export const contactUpdateSchema = contactCreateSchema.partial();
+export const customerUpdateSchema = customerCreateSchema.partial();
 
 // Organization schemas
 export const organizationCreateSchema = z.object({
@@ -268,25 +275,45 @@ export const offerCreateSchema = z.object({
 
 export const offerUpdateSchema = offerCreateSchema.partial();
 
-// Project schemas
-export const projectCreateSchema = z.object({
-	title: z
-		.string()
-		.min(1, "Title is required")
-		.max(200, "Title cannot exceed 200 characters"),
-	description: z
-		.string()
-		.max(2000, "Description cannot exceed 2000 characters")
-		.optional()
-		.nullable(),
-	url: optionalUrlSchema,
-	organization_id: optionalUuidSchema,
-	start_date: optionalDateSchema,
-	end_date: optionalDateSchema,
-	status: z.enum(["Active", "Paused", "Archived"]).default("Active"),
+// Job schemas
+export const jobCreateSchema = z.object({
+	customer_id: z.string().uuid("Invalid Customer ID"),
+	type: z.enum(["estimate", "job"]).default("estimate"),
+	service_type: z.string().default("Exterior Windows"),
+	stories: z.coerce.number().int().min(1).default(1),
+	panes_count: z.coerce.number().int().min(0).default(0),
+	hard_water_stains: optionalBooleanSchema,
+	frequency: z.string().default("one-time"),
+	status: z.string().default("estimate_requested"),
+	price_estimate: z.coerce.number().min(0).default(0),
+	notes: z.string().optional().nullable(),
 });
 
-export const projectUpdateSchema = projectCreateSchema.partial();
+export const jobUpdateSchema = jobCreateSchema.partial();
+
+// Appointment schemas
+export const appointmentCreateSchema = z.object({
+	job_id: z.string().uuid(),
+	customer_id: z.string().uuid(),
+	type: z.string(),
+	start_time: z.string(),
+	end_time: z.string(),
+	tech_name: z.string().optional().nullable(),
+	status: z.string().default("scheduled"),
+});
+
+// Scheduled Message schemas
+export const scheduledMessageSchema = z.object({
+	customer_id: z.string().uuid(),
+	job_id: optionalUuidSchema,
+	appointment_id: optionalUuidSchema,
+	to_number: z.string(),
+	body: z.string(),
+	send_at: z.string(),
+	status: z.string().default("pending"),
+});
+
+export const jobUpdateSchema = jobCreateSchema.partial();
 
 // API response schemas
 export const apiErrorSchema = z.object({
@@ -300,13 +327,13 @@ export const apiSuccessSchema = z.object({
 });
 
 // Type exports
-export type ContactCreateData = z.infer<typeof contactCreateSchema>;
-export type ContactUpdateData = z.infer<typeof contactUpdateSchema>;
+export type CustomerCreateData = z.infer<typeof customerCreateSchema>;
+export type CustomerUpdateData = z.infer<typeof customerUpdateSchema>;
 export type OrganizationCreateData = z.infer<typeof organizationCreateSchema>;
 export type OrganizationUpdateData = z.infer<typeof organizationUpdateSchema>;
 export type ServiceCreateData = z.infer<typeof serviceCreateSchema>;
 export type ServiceUpdateData = z.infer<typeof serviceUpdateSchema>;
 export type OfferCreateData = z.infer<typeof offerCreateSchema>;
 export type OfferUpdateData = z.infer<typeof offerUpdateSchema>;
-export type ProjectCreateData = z.infer<typeof projectCreateSchema>;
-export type ProjectUpdateData = z.infer<typeof projectUpdateSchema>;
+export type JobCreateData = z.infer<typeof jobCreateSchema>;
+export type JobUpdateData = z.infer<typeof jobUpdateSchema>;
